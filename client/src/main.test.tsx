@@ -31,7 +31,7 @@ describe("Main Component", () => {
   it("renders an X when cell is clicked on", async () => {
     render(<Main />);
 
-    const cell = screen.getByTestId("cell-0-0");
+    const cell = screen.getByTestId("cell-0");
     await cell.click();
 
     expect(cell.textContent).toBe("X");
@@ -40,9 +40,9 @@ describe("Main Component", () => {
   it("toggles active player after clicking a cell", async () => {
     render(<Main />);
 
-    const firstCell = screen.getByTestId("cell-0-0");
-    const secondCell = screen.getByTestId("cell-0-1");
-    const thirdCell = screen.getByTestId("cell-0-2");
+    const firstCell = screen.getByTestId("cell-0");
+    const secondCell = screen.getByTestId("cell-1");
+    const thirdCell = screen.getByTestId("cell-2");
 
     await firstCell.click();
     await secondCell.click();
@@ -54,7 +54,7 @@ describe("Main Component", () => {
 
   it("blocks a cell after it has been played on", async () => {
     render(<Main />);
-    const cell = screen.getByTestId("cell-0-0");
+    const cell = screen.getByTestId("cell-0");
 
     await cell.click();
     await cell.click();
@@ -65,8 +65,8 @@ describe("Main Component", () => {
   it("does not toggle the player if clicking on a blocked cell", async () => {
     render(<Main />);
 
-    const firstCell = screen.getByTestId("cell-0-0");
-    const secondCell = screen.getByTestId("cell-0-1");
+    const firstCell = screen.getByTestId("cell-0");
+    const secondCell = screen.getByTestId("cell-1"); //
 
     await firstCell.click();
     await firstCell.click(); // Same cell click
