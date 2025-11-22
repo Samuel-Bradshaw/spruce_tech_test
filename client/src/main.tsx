@@ -13,42 +13,66 @@ export const Main = () => {
       <div className="font-bold text-2xl">Tic Tac Toe</div>
       <div className="flex flex-col gap-1">
         {board.map((row, rowIndex) => (
-          <GameRow key={rowIndex} row={row} rowIndex={rowIndex} />
+          <GameRow
+            key={rowIndex}
+            row={row}
+            rowIndex={rowIndex}
+            setBoard={setBoard}
+          />
         ))}
       </div>
     </div>
   );
 };
 
-function GameRow(props: {
+type GameRowProps = {
   row: CellState[];
   rowIndex: number;
-}): React.JSX.Element {
+  setBoard: React.Dispatch<React.SetStateAction<CellState[][]>>;
+};
+
+function GameRow({ row, rowIndex, setBoard }: GameRowProps): React.JSX.Element {
   return (
     <div className="flex gap-1">
-      {props.row.map((cell, colIndex) => (
+      {row.map((cell, colIndex) => (
         <GameCell
           key={colIndex}
-          cell={cell}
-          rowIndex={props.rowIndex}
+          cellState={cell}
+          rowIndex={rowIndex}
           colIndex={colIndex}
+          setBoard={setBoard}
         />
       ))}
     </div>
   );
 }
 
-function GameCell(props: {
-  cell: CellState;
+type GameCellProps = {
+  cellState: CellState;
   rowIndex: number;
   colIndex: number;
-}): React.JSX.Element {
+  setBoard: React.Dispatch<React.SetStateAction<CellState[][]>>;
+};
+
+function GameCell({
+  cellState,
+  rowIndex,
+  colIndex,
+  setBoard,
+}: GameCellProps): React.JSX.Element {
   return (
     <div
       className="border-2 border-gray-900 w-10 h-10 cursor-pointer items-center justify-center text-2xl font-bold flex"
-      data-testid={`cell-${props.rowIndex}-${props.colIndex}`}
+      data-testid={`cell-${rowIndex}-${colIndex}`}
+      onClick={() =>
+        setBoard((prev) => {
+          const newBoard = prev.map((row) => [...row]);
+          newBoard[rowIndex][colIndex] = "X";
+          return newBoard;
+        })
+      }
     >
-      {props.cell}
+      {cellState}
     </div>
   );
 }

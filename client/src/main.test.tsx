@@ -27,4 +27,13 @@ describe("Main Component", () => {
       expect(cell.textContent).toBe("");
     });
   });
+
+  it("renders an X when cell is clicked on", async () => {
+    render(<Main />);
+
+    const cell = screen.getByTestId("cell-0-0");
+    await cell.click();
+
+    expect(cell.textContent).toBe("X");
+  });
 });
