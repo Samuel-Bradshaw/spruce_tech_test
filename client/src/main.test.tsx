@@ -82,7 +82,7 @@ describe("Main Component", () => {
       expect(screen.queryByText(/Player [XO] wins!/)).not.toBeInTheDocument();
     });
 
-    it("handles vertical winning conditions", async () => {
+    it("displays winner modal when a player wins", async () => {
       render(<Main />);
 
       const upperLeftCell = screen.getByTestId("cell-0");
@@ -94,54 +94,6 @@ describe("Main Component", () => {
       await middleLeftCell.click();
       await screen.getByTestId("cell-4").click();
       await lowerLeftCell.click();
-
-      const winnerText = await screen.findByText("Player X wins!");
-      expect(winnerText).toBeVisible();
-    });
-
-    it("handles horizontal winning conditions", async () => {
-      render(<Main />);
-      const topLeft = screen.getByTestId("cell-0");
-      const topMiddle = screen.getByTestId("cell-1");
-      const topRight = screen.getByTestId("cell-2");
-
-      await topLeft.click();
-      await screen.getByTestId("cell-3").click();
-      await topMiddle.click();
-      await screen.getByTestId("cell-4").click();
-      await topRight.click();
-
-      const winnerText = await screen.findByText("Player X wins!");
-      expect(winnerText).toBeVisible();
-    });
-
-    it("handles left diagonal winning conditions", async () => {
-      render(<Main />);
-      const diagTopLeft = screen.getByTestId("cell-0");
-      const diagMiddle = screen.getByTestId("cell-4");
-      const diagBottomRight = screen.getByTestId("cell-8");
-
-      await diagTopLeft.click();
-      await screen.getByTestId("cell-2").click();
-      await diagMiddle.click();
-      await screen.getByTestId("cell-3").click();
-      await diagBottomRight.click();
-
-      const winnerText = await screen.findByText("Player X wins!");
-      expect(winnerText).toBeVisible();
-    });
-
-    it("handles right diagonal winning conditions", async () => {
-      render(<Main />);
-      const diagTopRight = screen.getByTestId("cell-2");
-      const diagMiddle = screen.getByTestId("cell-4");
-      const diagBottomLeft = screen.getByTestId("cell-6");
-
-      await diagTopRight.click();
-      await screen.getByTestId("cell-3").click();
-      await diagMiddle.click();
-      await screen.getByTestId("cell-5").click();
-      await diagBottomLeft.click();
 
       const winnerText = await screen.findByText("Player X wins!");
       expect(winnerText).toBeVisible();

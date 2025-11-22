@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { CellState, XorO } from "./types";
 import { WinnerModal } from "./components/WinnerModal";
 import { getIfWinner } from "./helpers/winning-conditions-helpers";
@@ -8,10 +8,12 @@ export const BOARD_LENGTH = 3;
 export const Main = () => {
   const [board, setBoard] = useState<CellState[]>(Array(9).fill(undefined));
   const [activePlayer, setActivePlayer] = useState<XorO>("X");
-  const togglePlayer = () => {
+
+  const winner = useMemo(() => getIfWinner(board), [board]);
+
+  const togglePlayer = useCallback(() => {
     setActivePlayer((prev) => (prev === "X" ? "O" : "X"));
-  };
-  const winner = getIfWinner(board);
+  }, []);
 
   return (
     <>
@@ -20,7 +22,7 @@ export const Main = () => {
         <div className="font-bold text-2xl">Tic Tac Toe</div>
         <div className="grid grid-cols-3 gap-1">
           {board.map((cell, idx) => (
-            <GameCell
+            <GameCellMemo
               key={idx}
               cellState={cell}
               cellIndex={idx}
@@ -43,6 +45,7 @@ type GameCellProps = {
   togglePlayer: () => void;
 };
 
+const GameCellMemo = React.memo(GameCell);
 function GameCell({
   cellState,
   cellIndex,
@@ -56,7 +59,7 @@ function GameCell({
       if (isCellOccupied) {
         return prev;
       }
-      const newBoard = prev;
+      const newBoard = [...prev];
       newBoard[cellIndex] = activePlayer;
       togglePlayer();
       return newBoard;
