@@ -1,39 +1,33 @@
 import React, { useState } from "react";
 import { CellState, XorO } from "./types";
 import { WinnerModal } from "./components/WinnerModal";
+import { getIfWinner } from "./helpers/winning-conditions-helpers";
+
+export const BOARD_LENGTH = 3;
 
 export const Main = () => {
-  const [board, setBoard] = useState<CellState[][]>([
-    [undefined, undefined, undefined],
-    [undefined, undefined, undefined],
-    [undefined, undefined, undefined],
-  ]);
+  const [board, setBoard] = useState<CellState[]>(Array(9).fill(undefined));
   const [activePlayer, setActivePlayer] = useState<XorO>("X");
   const togglePlayer = () => {
     setActivePlayer((prev) => (prev === "X" ? "O" : "X"));
   };
-  const winner = checkWinningCondition(board);
+  const winner = getIfWinner(board);
 
   return (
     <>
       {winner && <WinnerModal winner={winner} />}
       <div className="flex flex-col mt-10 items-center gap-10">
         <div className="font-bold text-2xl">Tic Tac Toe</div>
-        <div className="flex flex-col gap-1">
-          {board.map((row, rowIndex) => (
-            <div key={rowIndex} className="flex gap-1">
-              {row.map((cell, colIndex) => (
-                <GameCell
-                  key={colIndex}
-                  cellState={cell}
-                  rowIndex={rowIndex}
-                  colIndex={colIndex}
-                  setBoard={setBoard}
-                  activePlayer={activePlayer}
-                  togglePlayer={togglePlayer}
-                />
-              ))}
-            </div>
+        <div className="grid grid-cols-3 gap-1">
+          {board.map((cell, idx) => (
+            <GameCell
+              key={idx}
+              cellState={cell}
+              cellIndex={idx}
+              setBoard={setBoard}
+              activePlayer={activePlayer}
+              togglePlayer={togglePlayer}
+            />
           ))}
         </div>
       </div>
@@ -41,66 +35,38 @@ export const Main = () => {
   );
 };
 
-function checkWinningCondition(board: CellState[][]): CellState {
-  const winningCombinations = [
-    // Rows
-    [board[0][0], board[0][1], board[0][2]],
-    [board[1][0], board[1][1], board[1][2]],
-    [board[2][0], board[2][1], board[2][2]],
-    // Columns
-    [board[0][0], board[1][0], board[2][0]],
-    [board[0][1], board[1][1], board[2][1]],
-    [board[0][2], board[1][2], board[2][2]],
-    // Diagonals
-    [board[0][0], board[1][1], board[2][2]],
-    [board[0][2], board[1][1], board[2][0]],
-  ];
-
-  for (const combination of winningCombinations) {
-    if (
-      combination[0] &&
-      combination.every((cell) => cell === combination[0])
-    ) {
-      return combination[0];
-    }
-  }
-  return;
-}
-
 type GameCellProps = {
   cellState: CellState;
-  rowIndex: number;
-  colIndex: number;
-  setBoard: React.Dispatch<React.SetStateAction<CellState[][]>>;
+  cellIndex: number;
+  setBoard: React.Dispatch<React.SetStateAction<CellState[]>>;
   activePlayer: XorO;
   togglePlayer: () => void;
 };
 
 function GameCell({
   cellState,
-  rowIndex,
-  colIndex,
+  cellIndex,
   setBoard,
   activePlayer,
   togglePlayer,
 }: GameCellProps): React.JSX.Element {
   const handleClick = () => {
     setBoard((prev) => {
-      if (prev[rowIndex][colIndex]) {
+      const isCellOccupied = !!prev[cellIndex];
+      if (isCellOccupied) {
         return prev;
-      } else {
-        const newBoard = prev.map((row) => [...row]);
-        newBoard[rowIndex][colIndex] = activePlayer;
-        togglePlayer();
-        return newBoard;
       }
+      const newBoard = prev;
+      newBoard[cellIndex] = activePlayer;
+      togglePlayer();
+      return newBoard;
     });
   };
 
   return (
     <div
       className="border-2 border-gray-900 w-10 h-10 cursor-pointer items-center justify-center text-2xl font-bold flex"
-      data-testid={`cell-${rowIndex}-${colIndex}`}
+      data-testid={`cell-${cellIndex}`}
       onClick={handleClick}
     >
       {cellState}

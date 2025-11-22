@@ -76,56 +76,75 @@ describe("Main Component", () => {
   });
 
   describe("Winning Conditions", () => {
+    it("should not declare an undefined winner", async () => {
+      render(<Main />);
+
+      expect(screen.queryByText(/Player [XO] wins!/)).not.toBeInTheDocument();
+    });
+
     it("handles vertical winning conditions", async () => {
       render(<Main />);
 
-      const upperLeftCell = screen.getByTestId("cell-0-0");
-      const middleLeftCell = screen.getByTestId("cell-1-0");
-      const lowerLeftCell = screen.getByTestId("cell-2-0");
+      const upperLeftCell = screen.getByTestId("cell-0");
+      const middleLeftCell = screen.getByTestId("cell-3");
+      const lowerLeftCell = screen.getByTestId("cell-6");
 
       await upperLeftCell.click();
-      await screen.getByTestId("cell-0-1").click();
+      await screen.getByTestId("cell-2").click();
       await middleLeftCell.click();
-      await screen.getByTestId("cell-0-2").click();
+      await screen.getByTestId("cell-4").click();
       await lowerLeftCell.click();
 
-      expect(upperLeftCell.textContent).toBe("X");
-      expect(middleLeftCell.textContent).toBe("X");
-      expect(lowerLeftCell.textContent).toBe("X");
+      const winnerText = await screen.findByText("Player X wins!");
+      expect(winnerText).toBeVisible();
     });
 
     it("handles horizontal winning conditions", async () => {
       render(<Main />);
-      const topLeft = screen.getByTestId("cell-0-0");
-      const topMiddle = screen.getByTestId("cell-0-1");
-      const topRight = screen.getByTestId("cell-0-2");
+      const topLeft = screen.getByTestId("cell-0");
+      const topMiddle = screen.getByTestId("cell-1");
+      const topRight = screen.getByTestId("cell-2");
 
       await topLeft.click();
-      await screen.getByTestId("cell-1-0").click();
+      await screen.getByTestId("cell-3").click();
       await topMiddle.click();
-      await screen.getByTestId("cell-1-1").click();
+      await screen.getByTestId("cell-4").click();
       await topRight.click();
 
-      expect(topLeft.textContent).toBe("X");
-      expect(topMiddle.textContent).toBe("X");
-      expect(topRight.textContent).toBe("X");
+      const winnerText = await screen.findByText("Player X wins!");
+      expect(winnerText).toBeVisible();
     });
 
-    it("handles diagonal winning conditions", async () => {
+    it("handles left diagonal winning conditions", async () => {
       render(<Main />);
-      const diagTopLeft = screen.getByTestId("cell-0-0");
-      const diagMiddle = screen.getByTestId("cell-1-1");
-      const diagBottomRight = screen.getByTestId("cell-2-2");
+      const diagTopLeft = screen.getByTestId("cell-0");
+      const diagMiddle = screen.getByTestId("cell-4");
+      const diagBottomRight = screen.getByTestId("cell-8");
 
       await diagTopLeft.click();
-      await screen.getByTestId("cell-0-1").click();
+      await screen.getByTestId("cell-2").click();
       await diagMiddle.click();
-      await screen.getByTestId("cell-0-2").click();
+      await screen.getByTestId("cell-3").click();
       await diagBottomRight.click();
 
-      expect(diagTopLeft.textContent).toBe("X");
-      expect(diagMiddle.textContent).toBe("X");
-      expect(diagBottomRight.textContent).toBe("X");
+      const winnerText = await screen.findByText("Player X wins!");
+      expect(winnerText).toBeVisible();
+    });
+
+    it("handles right diagonal winning conditions", async () => {
+      render(<Main />);
+      const diagTopRight = screen.getByTestId("cell-2");
+      const diagMiddle = screen.getByTestId("cell-4");
+      const diagBottomLeft = screen.getByTestId("cell-6");
+
+      await diagTopRight.click();
+      await screen.getByTestId("cell-3").click();
+      await diagMiddle.click();
+      await screen.getByTestId("cell-5").click();
+      await diagBottomLeft.click();
+
+      const winnerText = await screen.findByText("Player X wins!");
+      expect(winnerText).toBeVisible();
     });
   });
 });
