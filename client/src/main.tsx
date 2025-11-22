@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { CellState, XorO } from "./types";
+import { WinnerModal } from "./components/WinnerModal";
 
 export const Main = () => {
   const [board, setBoard] = useState<CellState[][]>([
@@ -11,30 +12,60 @@ export const Main = () => {
   const togglePlayer = () => {
     setActivePlayer((prev) => (prev === "X" ? "O" : "X"));
   };
+  const winner = checkWinningCondition(board);
 
   return (
-    <div className="flex flex-col mt-10 items-center gap-10">
-      <div className="font-bold text-2xl">Tic Tac Toe</div>
-      <div className="flex flex-col gap-1">
-        {board.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex gap-1">
-            {row.map((cell, colIndex) => (
-              <GameCell
-                key={colIndex}
-                cellState={cell}
-                rowIndex={rowIndex}
-                colIndex={colIndex}
-                setBoard={setBoard}
-                activePlayer={activePlayer}
-                togglePlayer={togglePlayer}
-              />
-            ))}
-          </div>
-        ))}
+    <>
+      {winner && <WinnerModal winner={winner} />}
+      <div className="flex flex-col mt-10 items-center gap-10">
+        <div className="font-bold text-2xl">Tic Tac Toe</div>
+        <div className="flex flex-col gap-1">
+          {board.map((row, rowIndex) => (
+            <div key={rowIndex} className="flex gap-1">
+              {row.map((cell, colIndex) => (
+                <GameCell
+                  key={colIndex}
+                  cellState={cell}
+                  rowIndex={rowIndex}
+                  colIndex={colIndex}
+                  setBoard={setBoard}
+                  activePlayer={activePlayer}
+                  togglePlayer={togglePlayer}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
+
+function checkWinningCondition(board: CellState[][]): CellState {
+  const winningCombinations = [
+    // Rows
+    [board[0][0], board[0][1], board[0][2]],
+    [board[1][0], board[1][1], board[1][2]],
+    [board[2][0], board[2][1], board[2][2]],
+    // Columns
+    [board[0][0], board[1][0], board[2][0]],
+    [board[0][1], board[1][1], board[2][1]],
+    [board[0][2], board[1][2], board[2][2]],
+    // Diagonals
+    [board[0][0], board[1][1], board[2][2]],
+    [board[0][2], board[1][1], board[2][0]],
+  ];
+
+  for (const combination of winningCombinations) {
+    if (
+      combination[0] &&
+      combination.every((cell) => cell === combination[0])
+    ) {
+      return combination[0];
+    }
+  }
+  return;
+}
 
 type GameCellProps = {
   cellState: CellState;
