@@ -36,4 +36,42 @@ describe("Main Component", () => {
 
     expect(cell.textContent).toBe("X");
   });
+
+  it("toggles active player after clicking a cell", async () => {
+    render(<Main />);
+
+    const firstCell = screen.getByTestId("cell-0-0");
+    const secondCell = screen.getByTestId("cell-0-1");
+    const thirdCell = screen.getByTestId("cell-0-2");
+
+    await firstCell.click();
+    await secondCell.click();
+    await thirdCell.click();
+
+    expect(secondCell.textContent).toBe("O");
+    expect(thirdCell.textContent).toBe("X");
+  });
+
+  it("blocks a cell after it has been played on", async () => {
+    render(<Main />);
+    const cell = screen.getByTestId("cell-0-0");
+
+    await cell.click();
+    await cell.click();
+
+    expect(cell.textContent).toBe("X");
+  });
+
+  it("does not toggle the player if clicking on a blocked cell", async () => {
+    render(<Main />);
+
+    const firstCell = screen.getByTestId("cell-0-0");
+    const secondCell = screen.getByTestId("cell-0-1");
+
+    await firstCell.click();
+    await firstCell.click(); // Same cell click
+    await secondCell.click();
+
+    expect(secondCell.textContent).toBe("O");
+  });
 });
