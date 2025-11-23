@@ -1,5 +1,6 @@
 import { CellState, GameResult, XorO } from "../types";
 import { MIN_BOARD_LENGTH } from "../constants";
+import { getBoardLength } from "./board-utils";
 
 export function getIfGameOutcome(board: CellState[]): GameResult | null {
   const verticalWinner = getIfVerticalWinner(board);
@@ -19,16 +20,20 @@ export function getIfGameOutcome(board: CellState[]): GameResult | null {
 }
 
 function getIfHorizontalWinner(board: CellState[]): XorO | null {
-  for (let i = 0; i < MIN_BOARD_LENGTH; i++) {
-    const rowStartIdx = i * MIN_BOARD_LENGTH;
+  const boardLength = getBoardLength(board);
+  for (let i = 0; i < boardLength; i++) {
+    const rowStartIdx = i * boardLength;
     const firstCell = board[rowStartIdx];
     if (firstCell == undefined) continue;
 
-    if (
-      firstCell &&
-      firstCell === board[rowStartIdx + 1] &&
-      firstCell === board[rowStartIdx + 2]
-    ) {
+    let isRowWin = true;
+    for (let j = 1; j < boardLength; j++) {
+      if (board[rowStartIdx + j] !== firstCell) {
+        isRowWin = false;
+        break;
+      }
+    }
+    if (isRowWin) {
       return firstCell;
     }
   }
@@ -37,15 +42,21 @@ function getIfHorizontalWinner(board: CellState[]): XorO | null {
 }
 
 function getIfVerticalWinner(board: CellState[]): XorO | null {
-  for (let i = 0; i < MIN_BOARD_LENGTH; i++) {
-    const firstCell = board[i];
-    if (firstCell == undefined) continue;
-    if (
-      firstCell &&
-      firstCell === board[i + MIN_BOARD_LENGTH] &&
-      firstCell === board[i + MIN_BOARD_LENGTH * 2]
-    ) {
-      return firstCell;
+  const boardLength = getBoardLength(board);
+  for (let colIdx = 0; colIdx < boardLength; colIdx++) {
+    const firstColCell = board[colIdx];
+    if (firstColCell == undefined) continue;
+
+    let isColWin = true;
+    for (let rowIdx = 1; rowIdx < boardLength; rowIdx++) {
+      const nextCellDown = board[colIdx + boardLength * rowIdx];
+      if (nextCellDown !== firstColCell) {
+        isColWin = false;
+        break;
+      }
+    }
+    if (isColWin) {
+      return firstColCell;
     }
   }
 
@@ -53,29 +64,39 @@ function getIfVerticalWinner(board: CellState[]): XorO | null {
 }
 
 function getIfDiagonalWinner(board: CellState[]): XorO | null {
+  const boardLength = getBoardLength(board);
+
   const topLeftCell = board[0];
-  if (topLeftCell && isLeftDownwardWin(topLeftCell, board)) {
+  if (topLeftCell && isLeftDownwardWin(topLeftCell, board, boardLength)) {
     return topLeftCell;
   }
 
-  const topRightCell = board[MIN_BOARD_LENGTH - 1];
-  if (topRightCell && isRightDownwardWin(topRightCell, board)) {
+  const topRightCell = board[boardLength - 1];
+  if (topRightCell && isRightDownwardWin(topRightCell, board, boardLength)) {
     return topRightCell;
   }
 
   return null;
 }
 
-function isLeftDownwardWin(topLeftCell: XorO, board: CellState[]) {
+function isLeftDownwardWin(
+  topLeftCell: XorO,
+  board: CellState[],
+  boardLength: number,
+) {
   return (
-    topLeftCell === board[MIN_BOARD_LENGTH + 1] &&
-    topLeftCell === board[MIN_BOARD_LENGTH * 2 + 2]
+    topLeftCell === board[boardLength + 1] &&
+    topLeftCell === board[boardLength * 2 + 2]
   );
 }
 
-function isRightDownwardWin(topRightCell: XorO, board: CellState[]) {
-  const topRightCellIdx = MIN_BOARD_LENGTH - 1;
-  const distanceToNextDiag = MIN_BOARD_LENGTH - 1;
+function isRightDownwardWin(
+  topRightCell: XorO,
+  board: CellState[],
+  boardLength: number,
+) {
+  const topRightCellIdx = boardLength - 1;
+  const distanceToNextDiag = boardLength - 1;
   return (
     topRightCell === board[topRightCellIdx + distanceToNextDiag] &&
     topRightCell === board[topRightCellIdx + distanceToNextDiag * 2]

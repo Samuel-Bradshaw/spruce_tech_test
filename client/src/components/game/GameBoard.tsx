@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useCallback } from "react";
 import { CellState, XorO } from "../../types";
 import { GameCell } from "./GameCell";
+import { getBoardLength } from "../../utils/board-utils";
 
 type GameBoardProps = {
   board: CellState[];
@@ -27,7 +28,7 @@ export function GameBoard({ board, updateBoard }: GameBoardProps) {
     [activePlayer, board, updateBoard],
   );
 
-  const boardLength = Math.sqrt(board.length);
+  const boardLength = getBoardLength(board);
   return (
     <div className="flex flex-col mt-10 items-center gap-10">
       <h1 className="font-bold text-4xl tracking-tight text-white">

@@ -8,6 +8,12 @@ describe("Winning Conditions Helpers", () => {
     expect(getIfGameOutcome(board)).toBeNull();
   });
 
+  it("detects a tie when the board is full without a winner", () => {
+    const board: CellState[] = ["X", "O", "X", "X", "O", "O", "O", "X", "X"];
+
+    expect(getIfGameOutcome(board)).toBe("TIE");
+  });
+
   it("returns null when there is no winner", () => {
     const board: CellState[] = [
       "X",
@@ -155,6 +161,77 @@ describe("Winning Conditions Helpers", () => {
       ];
 
       expect(getIfGameOutcome(board)).toBe("O");
+    });
+  });
+
+  describe("larger board sizes", () => {
+    it("detects win on 4x4 board", () => {
+      const board: CellState[] = [
+        "X",
+        "X",
+        "X",
+        "X",
+        "O",
+        "O",
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        "O",
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        "O",
+      ];
+
+      expect(getIfGameOutcome(board)).toBe("X");
+    });
+
+    it("does not return a winner unless there is a full row", () => {
+      const board: CellState[] = [
+        "X",
+        "X",
+        "X",
+        "O",
+        "O",
+        "O",
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        "X",
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        "X",
+      ];
+
+      expect(getIfGameOutcome(board)).toBeNull();
+    });
+
+    it("does not return a winner unless there is a full column", () => {
+      const board: CellState[] = [
+        "O",
+        undefined,
+        undefined,
+        undefined,
+        "O",
+        undefined,
+        undefined,
+        undefined,
+        "O",
+        undefined,
+        undefined,
+        undefined,
+        "X",
+        undefined,
+        undefined,
+        undefined,
+      ];
+
+      expect(getIfGameOutcome(board)).toBeNull();
     });
   });
 });

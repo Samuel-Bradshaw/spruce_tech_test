@@ -5,6 +5,7 @@ import { getIfGameOutcome } from "./utils/game-outcome-utils";
 import { GameBoard } from "./components/game/GameBoard";
 import { UserInput } from "./components/UserInput";
 import { MIN_BOARD_LENGTH } from "./constants";
+import { getEmptyBoard } from "./utils/board-utils";
 
 export const Main = () => {
   const [boardLength, setBoardLength] = useState<number | undefined>();
@@ -37,7 +38,3 @@ export const Main = () => {
     </>
   );
 };
-
-function getEmptyBoard(sideLength: number): undefined[] {
-  return Array(sideLength * sideLength).fill(undefined);
-}
