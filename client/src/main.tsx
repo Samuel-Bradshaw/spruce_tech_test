@@ -10,13 +10,16 @@ const EMPTY_BOARD = Array(BOARD_LENGTH * BOARD_LENGTH).fill(undefined);
 export const Main = () => {
   const [board, setBoard] = useState<CellState[]>(EMPTY_BOARD);
   const winner = useMemo(() => getIfWinner(board), [board]);
+  const [resetKey, setResetKey] = useState(0);
+  const resetBoard = () => {
+    setBoard(EMPTY_BOARD);
+    setResetKey((prev) => ++prev);
+  };
 
   return (
     <>
-      {<GameBoard board={board} setBoard={setBoard} />}
-      {winner && (
-        <WinnerModal winner={winner} resetBoard={() => setBoard(EMPTY_BOARD)} />
-      )}
+      {<GameBoard key={resetKey} board={board} setBoard={setBoard} />}
+      {winner && <WinnerModal winner={winner} resetBoard={resetBoard} />}
     </>
   );
 };
