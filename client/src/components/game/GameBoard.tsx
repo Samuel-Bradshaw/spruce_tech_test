@@ -27,12 +27,18 @@ export function GameBoard({ board, updateBoard }: GameBoardProps) {
     [activePlayer, board, updateBoard],
   );
 
+  const boardLength = Math.sqrt(board.length);
   return (
     <div className="flex flex-col mt-10 items-center gap-10">
       <h1 className="font-bold text-4xl tracking-tight text-white">
         Tic Tac Toe
       </h1>
-      <div className="grid grid-cols-3 gap-2 p-6 bg-background-secondary rounded-lg shadow-xl">
+      <div
+        style={{
+          gridTemplateColumns: `repeat(${boardLength}, minmax(0, 1fr))`,
+        }}
+        className="grid gap-2 p-6 bg-background-secondary rounded-lg shadow-xl"
+      >
         {board.map((cell, idx) => (
           <GameCell
             key={idx}

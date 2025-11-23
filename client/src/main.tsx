@@ -12,6 +12,12 @@ export const Main = () => {
     getEmptyBoard(MIN_BOARD_LENGTH),
   );
 
+  useEffect(() => {
+    if (boardLength) {
+      setBoard(getEmptyBoard(boardLength));
+    }
+  }, [boardLength]);
+
   // reset key forces remounting of GameBoard on win/draw
   const [resetKey, setResetKey] = useState(0);
   const resetBoard = useCallback(() => {

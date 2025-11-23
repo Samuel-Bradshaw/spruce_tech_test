@@ -35,7 +35,7 @@ describe("Main Component", () => {
       expect(screen.queryByText("Let's play a new game")).toBeNull();
     });
 
-    it("renders all 9 game board cells successfully", () => {
+    it("renders initial 9 game board cells successfully", () => {
       render(<Main />);
 
       const cells = screen.getAllByTestId(/^cell-/);
@@ -50,6 +50,22 @@ describe("Main Component", () => {
       cells.forEach((cell) => {
         expect(cell.textContent).toBe("");
       });
+    });
+
+    it("renders correct number of cells for 5x5 board", async () => {
+      const user = userEvent.setup();
+      render(<Main />);
+
+      const input = screen.getByLabelText(
+        "Enter board size (the board length):",
+      );
+      await user.clear(input);
+      await user.type(input, "5");
+      const startButton = screen.getByText("Start Game");
+      await user.click(startButton);
+
+      const cells = screen.getAllByTestId(/^cell-/);
+      expect(cells).toHaveLength(25);
     });
   });
 
