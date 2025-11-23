@@ -3,6 +3,7 @@ import { Button } from "./ui/Button";
 import { MIN_BOARD_LENGTH } from "../constants";
 import { Modal } from "./ui/Modal";
 import { sanitiseNumberInput } from "../utils/sanitation-utils";
+import { ErrorAlert } from "./ui/ErrorAlert";
 
 type UserInputProps = {
   setBoardLength: React.Dispatch<React.SetStateAction<number | undefined>>;
@@ -16,13 +17,16 @@ export function UserInput({
   const [lengthInput, setLengthInput] = React.useState<string>(
     String(MIN_BOARD_LENGTH),
   );
+  const [errorMessage, setErrorMessage] = React.useState<string>("");
 
   const handleSubmit = (_: React.MouseEvent<HTMLButtonElement>) => {
     try {
       const sanitisedInput = sanitiseNumberInput(lengthInput);
       setBoardLength(sanitisedInput);
     } catch (error) {
-      console.log("ERROR: need warning");
+      setErrorMessage(
+        "Invalid Input. Only valid numbers between 3 and 15 are allowed.",
+      );
     }
   };
 
@@ -41,6 +45,7 @@ export function UserInput({
         }}
         className="p-2 rounded-md bg-text-secondary text-background-primary border-border-light focus:outline-none focus:ring-2 focus:ring-primary"
       />
+      {errorMessage && ErrorAlert(errorMessage)}
       <Button type="submit" onClick={(e) => handleSubmit(e)}>
         Start Game
       </Button>
