@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { CellState } from "./types";
-import { WinnerModal } from "./components/WinnerModal";
+import { OutcomeModal } from "./components/OutcomeModal";
 import { getIfWinner } from "./helpers/winning-conditions-helpers";
 import { GameBoard } from "./components/GameBoard";
 
@@ -16,10 +16,12 @@ export const Main = () => {
     setResetKey((prev) => ++prev);
   };
 
+  console.log({ winner });
+
   return (
     <>
       {<GameBoard key={resetKey} board={board} setBoard={setBoard} />}
-      {winner && <WinnerModal winner={winner} resetBoard={resetBoard} />}
+      {winner && <OutcomeModal outcome={winner} resetBoard={resetBoard} />}
     </>
   );
 };

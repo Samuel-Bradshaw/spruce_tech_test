@@ -1,7 +1,7 @@
-import { CellState, XorO } from "../types";
+import { CellState, GameResult, XorO } from "../types";
 import { BOARD_LENGTH } from "../main";
 
-export function getIfWinner(board: CellState[]): XorO | null {
+export function getIfWinner(board: CellState[]): GameResult | null {
   const verticalWinner = getIfVerticalWinner(board);
   if (verticalWinner) return verticalWinner;
 
@@ -10,6 +10,10 @@ export function getIfWinner(board: CellState[]): XorO | null {
 
   const diagonalWinner = getIfDiagonalWinner(board);
   if (diagonalWinner) return diagonalWinner;
+
+  if (board.every((cell) => cell !== undefined)) {
+    return "TIE";
+  }
 
   return null;
 }

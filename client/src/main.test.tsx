@@ -86,6 +86,20 @@ describe("Main Component", () => {
       expect(screen.queryByText(/Player [XO] wins!/)).not.toBeInTheDocument();
     });
 
+    it("displays a draw modal when the board is full without a winner", async () => {
+      render(<Main />);
+
+      const moves = [0, 1, 2, 4, 3, 5, 7, 6, 8]; // XOXOOXXOX
+
+      for (const move of moves) {
+        const cell = screen.getByTestId(`cell-${move}`);
+        await cell.click();
+      }
+
+      const drawText = await screen.findByText("It's a draw!");
+      expect(drawText).toBeVisible();
+    });
+
     it("displays winner modal when a player wins", async () => {
       render(<Main />);
 
@@ -99,7 +113,7 @@ describe("Main Component", () => {
       await screen.getByTestId("cell-4").click();
       await lowerLeftCell.click();
 
-      const winnerText = await screen.findByText("Player X wins!");
+      const winnerText = await screen.findByText('Player "X" wins!');
       expect(winnerText).toBeVisible();
     });
   });
