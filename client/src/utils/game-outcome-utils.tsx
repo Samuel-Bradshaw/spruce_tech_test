@@ -1,7 +1,7 @@
 import { CellState, GameResult, XorO } from "../types";
-import { BOARD_LENGTH } from "../main";
+import { DEFAULT_BOARD_LENGTH } from "../constants";
 
-export function getIfWinner(board: CellState[]): GameResult | null {
+export function getIfGameOutcome(board: CellState[]): GameResult | null {
   const verticalWinner = getIfVerticalWinner(board);
   if (verticalWinner) return verticalWinner;
 
@@ -19,8 +19,8 @@ export function getIfWinner(board: CellState[]): GameResult | null {
 }
 
 function getIfHorizontalWinner(board: CellState[]): XorO | null {
-  for (let i = 0; i < BOARD_LENGTH; i++) {
-    const rowStartIdx = i * BOARD_LENGTH;
+  for (let i = 0; i < DEFAULT_BOARD_LENGTH; i++) {
+    const rowStartIdx = i * DEFAULT_BOARD_LENGTH;
     const firstCell = board[rowStartIdx];
     if (firstCell == undefined) continue;
 
@@ -37,13 +37,13 @@ function getIfHorizontalWinner(board: CellState[]): XorO | null {
 }
 
 function getIfVerticalWinner(board: CellState[]): XorO | null {
-  for (let i = 0; i < BOARD_LENGTH; i++) {
+  for (let i = 0; i < DEFAULT_BOARD_LENGTH; i++) {
     const firstCell = board[i];
     if (firstCell == undefined) continue;
     if (
       firstCell &&
-      firstCell === board[i + BOARD_LENGTH] &&
-      firstCell === board[i + BOARD_LENGTH * 2]
+      firstCell === board[i + DEFAULT_BOARD_LENGTH] &&
+      firstCell === board[i + DEFAULT_BOARD_LENGTH * 2]
     ) {
       return firstCell;
     }
@@ -58,7 +58,7 @@ function getIfDiagonalWinner(board: CellState[]): XorO | null {
     return topLeftCell;
   }
 
-  const topRightCell = board[BOARD_LENGTH - 1];
+  const topRightCell = board[DEFAULT_BOARD_LENGTH - 1];
   if (topRightCell && isRightDownwardWin(topRightCell, board)) {
     return topRightCell;
   }
@@ -68,14 +68,14 @@ function getIfDiagonalWinner(board: CellState[]): XorO | null {
 
 function isLeftDownwardWin(topLeftCell: XorO, board: CellState[]) {
   return (
-    topLeftCell === board[BOARD_LENGTH + 1] &&
-    topLeftCell === board[BOARD_LENGTH * 2 + 2]
+    topLeftCell === board[DEFAULT_BOARD_LENGTH + 1] &&
+    topLeftCell === board[DEFAULT_BOARD_LENGTH * 2 + 2]
   );
 }
 
 function isRightDownwardWin(topRightCell: XorO, board: CellState[]) {
-  const topRightCellIdx = BOARD_LENGTH - 1;
-  const distanceToNextDiag = BOARD_LENGTH - 1;
+  const topRightCellIdx = DEFAULT_BOARD_LENGTH - 1;
+  const distanceToNextDiag = DEFAULT_BOARD_LENGTH - 1;
   return (
     topRightCell === board[topRightCellIdx + distanceToNextDiag] &&
     topRightCell === board[topRightCellIdx + distanceToNextDiag * 2]

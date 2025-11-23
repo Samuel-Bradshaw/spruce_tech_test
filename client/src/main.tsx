@@ -1,27 +1,37 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { CellState } from "./types";
-import { getIfWinner } from "./helpers/winning-conditions-helpers";
-import { GameBoard } from "./components/game/GameBoard";
 import { OutcomeView } from "./components/OutcomeView";
-
-export const BOARD_LENGTH = 3;
-const EMPTY_BOARD = Array(BOARD_LENGTH * BOARD_LENGTH).fill(undefined);
+import { getIfGameOutcome } from "./utils/game-outcome-utils";
+import { GameBoard } from "./components/game/GameBoard";
+import { UserInput } from "./components/UserInput";
+import { DEFAULT_BOARD_LENGTH } from "./constants";
 
 export const Main = () => {
-  const [board, setBoard] = useState<CellState[]>(EMPTY_BOARD);
-  const winner = useMemo(() => getIfWinner(board), [board]);
-  const [resetKey, setResetKey] = useState(0);
-  const resetBoard = () => {
-    setBoard(EMPTY_BOARD);
-    setResetKey((prev) => ++prev);
-  };
+  const [boardLength, setBoardLength] = useState<number | undefined>(
+    DEFAULT_BOARD_LENGTH,
+  );
 
-  console.log({ winner });
+  const [board, setBoard] = useState<CellState[]>(
+    getEmptyBoard(boardLength ?? DEFAULT_BOARD_LENGTH),
+  );
+  const gameOutcome = useMemo(() => getIfGameOutcome(board), [board]);
+  const [resetKey, setResetKey] = useState(0);
+  const resetBoard = useCallback(() => {
+    setBoard(getEmptyBoard(boardLength ?? DEFAULT_BOARD_LENGTH));
+    setResetKey((prev) => ++prev);
+  }, [boardLength]);
 
   return (
     <>
-      {<GameBoard key={resetKey} board={board} setBoard={setBoard} />}
-      {winner && <OutcomeView outcome={winner} resetBoard={resetBoard} />}
+      {<UserInput setBoardLength={setBoardLength} />}
+      {<GameBoard key={resetKey} board={board} updateBoard={setBoard} />}
+      {gameOutcome && (
+        <OutcomeView outcome={gameOutcome} resetBoard={resetBoard} />
+      )}
     </>
   );
 };
+
+function getEmptyBoard(sideLength: number) {
+  return Array(sideLength * sideLength).fill(undefined);
+}

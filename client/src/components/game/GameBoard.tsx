@@ -5,28 +5,26 @@ import { GameCell } from "./GameCell";
 
 type GameBoardProps = {
   board: CellState[];
-  setBoard: React.Dispatch<React.SetStateAction<CellState[]>>;
+  updateBoard: React.Dispatch<React.SetStateAction<CellState[]>>;
 };
 
-export function GameBoard({ board, setBoard }: GameBoardProps) {
+export function GameBoard({ board, updateBoard }: GameBoardProps) {
   const [activePlayer, setActivePlayer] = useState<XorO>("X");
-  const togglePlayer = useCallback(() => {
-    setActivePlayer((prev) => (prev === "X" ? "O" : "X"));
-  }, []);
 
   const handleCellClick = useCallback(
     (cellIdx: number) => {
-      setBoard((prev) => {
-        const isCellOccupied = !!prev[cellIdx];
-        if (isCellOccupied) return prev;
+      const isCellOccupied = !!board[cellIdx];
+      if (isCellOccupied) return;
 
+      updateBoard((prev) => {
         const newBoard = [...prev];
         newBoard[cellIdx] = activePlayer;
-        togglePlayer();
         return newBoard;
       });
+
+      setActivePlayer((prev) => (prev === "X" ? "O" : "X"));
     },
-    [activePlayer, setBoard, togglePlayer],
+    [activePlayer, board, updateBoard],
   );
 
   return (

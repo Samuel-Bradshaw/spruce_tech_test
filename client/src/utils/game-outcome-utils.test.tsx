@@ -1,11 +1,11 @@
-import { getIfWinner } from "./winning-conditions-helpers";
 import { CellState } from "../types";
+import { getIfGameOutcome } from "./game-outcome-utils";
 
 describe("Winning Conditions Helpers", () => {
   it("returns null for an empty board", () => {
     const board: CellState[] = Array(9).fill(undefined);
 
-    expect(getIfWinner(board)).toBeNull();
+    expect(getIfGameOutcome(board)).toBeNull();
   });
 
   it("returns null when there is no winner", () => {
@@ -21,7 +21,7 @@ describe("Winning Conditions Helpers", () => {
       undefined,
     ];
 
-    expect(getIfWinner(board)).toBeNull();
+    expect(getIfGameOutcome(board)).toBeNull();
   });
 
   describe("vertical winning conditions", () => {
@@ -38,7 +38,7 @@ describe("Winning Conditions Helpers", () => {
         undefined,
       ];
 
-      expect(getIfWinner(board)).toBe("X");
+      expect(getIfGameOutcome(board)).toBe("X");
     });
 
     it("detects vertical win in middle column", () => {
@@ -54,7 +54,7 @@ describe("Winning Conditions Helpers", () => {
         undefined,
       ];
 
-      expect(getIfWinner(board)).toBe("X");
+      expect(getIfGameOutcome(board)).toBe("X");
     });
 
     it("detects vertical win in last column", () => {
@@ -70,7 +70,7 @@ describe("Winning Conditions Helpers", () => {
         "O",
       ];
 
-      expect(getIfWinner(board)).toBe("O");
+      expect(getIfGameOutcome(board)).toBe("O");
     });
   });
 
@@ -88,7 +88,7 @@ describe("Winning Conditions Helpers", () => {
         undefined,
       ];
 
-      expect(getIfWinner(board)).toBe("X");
+      expect(getIfGameOutcome(board)).toBe("X");
     });
 
     it("detects horizontal win in middle row", () => {
@@ -104,7 +104,7 @@ describe("Winning Conditions Helpers", () => {
         undefined,
       ];
 
-      expect(getIfWinner(board)).toBe("X");
+      expect(getIfGameOutcome(board)).toBe("X");
     });
 
     it("detects horizontal win in last row", () => {
@@ -120,7 +120,7 @@ describe("Winning Conditions Helpers", () => {
         "O",
       ];
 
-      expect(getIfWinner(board)).toBe("O");
+      expect(getIfGameOutcome(board)).toBe("O");
     });
   });
 
@@ -138,7 +138,7 @@ describe("Winning Conditions Helpers", () => {
         "X",
       ];
 
-      expect(getIfWinner(board)).toBe("X");
+      expect(getIfGameOutcome(board)).toBe("X");
     });
 
     it("detects right diagonal win (top-right to bottom-left)", () => {
@@ -154,7 +154,7 @@ describe("Winning Conditions Helpers", () => {
         "X",
       ];
 
-      expect(getIfWinner(board)).toBe("O");
+      expect(getIfGameOutcome(board)).toBe("O");
     });
   });
 });

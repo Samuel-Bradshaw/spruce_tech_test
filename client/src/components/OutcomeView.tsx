@@ -16,7 +16,7 @@ export function OutcomeView({
     return (
       <Modal>
         <DrawMessage />
-        <Button onClick={resetBoard}> Play Again</Button>
+        <Button onClick={resetBoard}>Play Again</Button>
       </Modal>
     );
   }
@@ -24,7 +24,7 @@ export function OutcomeView({
   return (
     <Modal>
       <PlayerWinMessage winner={outcome} />
-      <Button onClick={resetBoard}> Play Again</Button>
+      <Button onClick={resetBoard}>Play Again</Button>
     </Modal>
   );
 }
