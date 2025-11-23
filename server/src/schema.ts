@@ -29,3 +29,16 @@ export const gameRoundSchema = z
     title: "GameRound",
     description: "A round of a tic-tac-toe game with its status",
   });
+
+export const gameStatsResponseSchema = z
+  .object({
+    totalGames: z.number().min(0),
+    playerXWins: z.number().min(0),
+    playerOWins: z.number().min(0),
+    totalDraws: z.number().min(0),
+  })
+  .openapi({
+    type: "object",
+    title: "GameStatsResponse",
+    description: "Statistics about the games played",
+  });
