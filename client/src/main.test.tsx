@@ -13,17 +13,26 @@ describe("Main Component", () => {
       expect(title).toBeInTheDocument();
     });
 
-    it.skip("asks for user input when the board length has not been set", () => {
+    it("asks for user input when the board length has not been set", () => {
       render(<Main />);
 
-      const userInputElement = screen.getByText("User Input Component");
+      const userInputElement = screen.getByText("Let's play a new game");
       expect(userInputElement).toBeVisible();
     });
 
-    it.skip("does not ask for user input when the board length has been set", () => {
+    it("does not ask for user input when the board length has been set", async () => {
+      const user = userEvent.setup();
       render(<Main />);
 
-      expect(screen.queryByText("User Input Component")).toBeNull();
+      const input = screen.getByLabelText(
+        "Enter board size (the board length):",
+      );
+      await user.clear(input);
+      await user.type(input, "3");
+      const startButton = screen.getByText("Start Game");
+      await user.click(startButton);
+
+      expect(screen.queryByText("Let's play a new game")).toBeNull();
     });
 
     it("renders all 9 game board cells successfully", () => {
