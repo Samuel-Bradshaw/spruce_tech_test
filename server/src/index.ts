@@ -1,20 +1,22 @@
 import { serve } from "@hono/node-server";
-import { Hono } from "hono";
+import { OpenAPIHono } from "@hono/zod-openapi";
+import gamesRouter from "./routes/games.js";
+import healthRouter from "./routes/health.js";
 
-const app = new Hono();
+const app = new OpenAPIHono();
 
-app.get("/v1/health", (c) => {
-  return c.text("Helthy service.");
-});
+const routes = app
+  .route("/api/v1/health", healthRouter)
+  .route("/api/v1/games", gamesRouter);
+
+export type AppType = typeof routes;
 
 serve(
   {
-    fetch: app.fetch,
+    fetch: routes.fetch,
     port: 3000,
   },
   (info) => {
     console.log(`Server is running on http://localhost:${info.port}`);
   },
 );
-
-export type AppType = typeof app;
