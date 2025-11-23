@@ -30,8 +30,8 @@ export function GameBoard({ board, setBoard }: GameBoardProps) {
 
   return (
     <div className="flex flex-col mt-10 items-center gap-10">
-      <div className="font-bold text-2xl">Tic Tac Toe</div>
-      <div className="grid grid-cols-3 gap-1">
+      <h1 className="font-bold text-4xl tracking-tight text-white">Tic Tac Toe</h1>
+      <div className="grid grid-cols-3 gap-2 p-6 bg-background-secondary rounded-lg shadow-xl">
         {board.map((cell, idx) => (
           <GameCellMemo
             key={idx}
@@ -59,7 +59,7 @@ function GameCell({
 }: GameCellProps): React.JSX.Element {
   return (
     <div
-      className="border-2 border-gray-900 w-10 h-10 cursor-pointer items-center justify-center text-2xl font-bold flex"
+      className="border-2 border-border-primary bg-background-primary w-20 h-20 cursor-pointer items-center justify-center text-3xl font-bold flex rounded-md transition-all duration-200 hover:bg-background-secondary hover:border-accent-sage hover:scale-105 active:scale-95 text-border-light"
       data-testid={`cell-${cellIndex}`}
       onClick={() => onCellClick(cellIndex)}
     >
