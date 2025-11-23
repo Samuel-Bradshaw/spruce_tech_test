@@ -233,5 +233,51 @@ describe("Winning Conditions Helpers", () => {
 
       expect(getIfGameOutcome(board)).toBeNull();
     });
+
+    it("does not return a winner unless there is a full downward diag", () => {
+      const board: CellState[] = [
+        "X",
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        "X",
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        "X",
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      ];
+
+      expect(getIfGameOutcome(board)).toBeNull();
+    });
+
+    it("does not return a winner unless there is a full upward diag", () => {
+      const board: CellState[] = [
+        undefined,
+        undefined,
+        undefined,
+        "X",
+        undefined,
+        undefined,
+        "X",
+        undefined,
+        undefined,
+        "X",
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      ];
+
+      expect(getIfGameOutcome(board)).toBeNull();
+    });
   });
 });

@@ -1,5 +1,4 @@
 import { CellState, GameResult, XorO } from "../types";
-import { MIN_BOARD_LENGTH } from "../constants";
 import { getBoardLength } from "./board-utils";
 
 export function getIfGameOutcome(board: CellState[]): GameResult | null {
@@ -64,41 +63,40 @@ function getIfVerticalWinner(board: CellState[]): XorO | null {
 }
 
 function getIfDiagonalWinner(board: CellState[]): XorO | null {
-  const boardLength = getBoardLength(board);
+  const downwardDiagonalOutcome = getIfDownwardDiagWin(board);
+  if (downwardDiagonalOutcome) return downwardDiagonalOutcome;
 
-  const topLeftCell = board[0];
-  if (topLeftCell && isLeftDownwardWin(topLeftCell, board, boardLength)) {
-    return topLeftCell;
-  }
-
-  const topRightCell = board[boardLength - 1];
-  if (topRightCell && isRightDownwardWin(topRightCell, board, boardLength)) {
-    return topRightCell;
-  }
+  const upwardDiagonalOutcome = getIfUpwardDiagWin(board);
+  if (upwardDiagonalOutcome) return upwardDiagonalOutcome;
 
   return null;
 }
 
-function isLeftDownwardWin(
-  topLeftCell: XorO,
-  board: CellState[],
-  boardLength: number,
-) {
-  return (
-    topLeftCell === board[boardLength + 1] &&
-    topLeftCell === board[boardLength * 2 + 2]
-  );
+function getIfDownwardDiagWin(board: CellState[]): XorO | null {
+  const topLeftCell = board[0];
+  if (!topLeftCell) return null;
+
+  const boardLength = getBoardLength(board);
+  for (let i = 1; i < boardLength; i++) {
+    const nextDiagIdx = i * boardLength + i; // next row, plus next column
+    if (board[nextDiagIdx] !== topLeftCell) {
+      return null;
+    }
+  }
+
+  return topLeftCell;
 }
 
-function isRightDownwardWin(
-  topRightCell: XorO,
-  board: CellState[],
-  boardLength: number,
-) {
-  const topRightCellIdx = boardLength - 1;
-  const distanceToNextDiag = boardLength - 1;
-  return (
-    topRightCell === board[topRightCellIdx + distanceToNextDiag] &&
-    topRightCell === board[topRightCellIdx + distanceToNextDiag * 2]
-  );
+function getIfUpwardDiagWin(board: CellState[]): XorO | null {
+  const boardLength = getBoardLength(board);
+  const topRightCell = board[boardLength - 1];
+  if (!topRightCell) return null;
+
+  for (let i = 1; i < boardLength; i++) {
+    const nextDiagIdx = boardLength - 1 + (boardLength - 1) * i; //
+    if (board[nextDiagIdx] !== topRightCell) {
+      return null;
+    }
+  }
+  return topRightCell;
 }
