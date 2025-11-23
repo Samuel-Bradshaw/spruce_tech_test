@@ -28,7 +28,6 @@ export function GameBoard({ board, updateBoard }: GameBoardProps) {
     [activePlayer, board, updateBoard],
   );
 
-  const boardLength = getBoardLength(board);
   return (
     <div className="flex flex-col mt-10 items-center gap-10">
       <h1 className="font-bold text-4xl tracking-tight text-white">
@@ -36,7 +35,7 @@ export function GameBoard({ board, updateBoard }: GameBoardProps) {
       </h1>
       <div
         style={{
-          gridTemplateColumns: `repeat(${boardLength}, minmax(0, 1fr))`,
+          gridTemplateColumns: `repeat(${getBoardLength(board)}, minmax(0, 1fr))`,
         }}
         className="grid gap-2 p-6 bg-background-secondary rounded-lg shadow-xl"
       >

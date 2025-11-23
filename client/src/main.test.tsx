@@ -187,7 +187,7 @@ describe("Main Component", () => {
       });
     });
 
-    it("always resets to the active player being X", async () => {
+    it("resets to the active player being X", async () => {
       const user = userEvent.setup();
       render(<Main />);
 
@@ -207,6 +207,26 @@ describe("Main Component", () => {
       const firstCell = screen.getByTestId("cell-0");
       await user.click(firstCell);
       expect(firstCell.textContent).toBe("X");
+    });
+
+    it("resets the board length and game outcome", async () => {
+      const user = userEvent.setup();
+      render(<Main />);
+
+      const upperLeftCell = screen.getByTestId("cell-0");
+      const middleLeftCell = screen.getByTestId("cell-3");
+      const lowerLeftCell = screen.getByTestId("cell-6");
+
+      await user.click(upperLeftCell);
+      await user.click(screen.getByTestId("cell-2"));
+      await user.click(middleLeftCell);
+      await user.click(screen.getByTestId("cell-4"));
+      await user.click(lowerLeftCell);
+
+      const playAgainButton = screen.getByText("Play Again");
+      await user.click(playAgainButton);
+
+      expect(screen.getByText("Let's play a new game")).toBeVisible();
     });
   });
 });

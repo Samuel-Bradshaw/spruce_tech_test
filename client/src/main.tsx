@@ -22,7 +22,8 @@ export const Main = () => {
   // reset key forces remounting of GameBoard on win/draw
   const [resetKey, setResetKey] = useState(0);
   const resetBoard = useCallback(() => {
-    setBoard(getEmptyBoard(boardLength ?? MIN_BOARD_LENGTH));
+    setBoardLength(undefined);
+    setBoard(getEmptyBoard(MIN_BOARD_LENGTH));
     setResetKey((prev) => ++prev);
   }, [boardLength]);
 
