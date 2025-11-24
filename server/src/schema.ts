@@ -17,14 +17,17 @@ export const gameRoundStatusSchema = z
     description: "The status of a game round",
   });
 
+const MIN_BOARD_SIZE = 3 * 3;
+const MAX_BOARD_SIZE = 15 * 15;
+
 export const gameRoundSchema = z
   .object({
     id: z.string().uuid(),
     winner: z.string().nullable(),
-    boardSize: z.number().min(3).max(15),
+    boardSize: z.number().min(MIN_BOARD_SIZE).max(MAX_BOARD_SIZE),
     status: gameRoundStatusSchema,
-    createdAt: z.date(),
-    completedAt: z.date().nullable(),
+    createdAt: z.coerce.date(),
+    completedAt: z.coerce.date().nullable(),
   })
   .openapi({
     type: "object",

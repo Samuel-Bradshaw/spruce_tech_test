@@ -1,16 +1,13 @@
 import db from "./client.js";
-import {
-  gameRoundsTable,
-  type NewGameRoundRequest,
-  type GameRound,
-} from "./schema.js";
+import { gameRoundsTable, type GameRound } from "./schema.js";
 
-export async function insertGameRound(boardSize: number): Promise<GameRound> {
+export async function insertGameRound(
+  boardSideLength: number,
+): Promise<GameRound> {
+  const boardSize = boardSideLength * boardSideLength;
   const [newGame] = await db
     .insert(gameRoundsTable)
-    .values({
-      boardSize,
-    })
+    .values({ boardSize })
     .returning();
 
   return newGame;

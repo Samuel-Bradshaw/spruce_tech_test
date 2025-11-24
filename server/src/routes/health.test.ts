@@ -9,14 +9,14 @@ describe("Health endpoint", () => {
     "/": healthRouter,
   });
 
-  const client = hc<typeof testApp>("http://localhost:3000");
+  const client = hc<typeof testApp>("http://localhost:9000");
 
   let server: ServerType | undefined;
   beforeAll(async () => {
     server = serve(
       {
         fetch: testApp.fetch,
-        port: 3000,
+        port: 9000,
       },
       () => {},
     );
