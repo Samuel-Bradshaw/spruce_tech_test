@@ -1,10 +1,15 @@
 import { createRoute, OpenAPIHono, type RouteHandler } from "@hono/zod-openapi";
 import z from "zod";
-import { gameRoundSchema, gameStatsResponseSchema } from "../schema.js";
+import {
+  errorResponseSchema,
+  gameRoundSchema,
+  gameStatsResponseSchema,
+} from "../schema.js";
 import { toJsonBody } from "../utils/json-utils.js";
+import { insertGameRound } from "../db/games.js";
 
 const createNewGameRequest = z.object({
-  boardSize: z.number().min(3).max(15).optional(),
+  boardSideLength: z.number().min(3).max(15),
 });
 
 const createGameRoute = createRoute({
@@ -16,23 +21,34 @@ const createGameRoute = createRoute({
   },
   responses: {
     201: toJsonBody(gameRoundSchema, "Game round created successfully"),
+    400: toJsonBody(errorResponseSchema, "Bad request"),
   },
 });
 type CreateGameRoute = typeof createGameRoute;
 
 const createGameHandler: RouteHandler<CreateGameRoute> = async (c) => {
-  const body = c.req.valid("json");
-  const boardSize = body.boardSize ?? 3;
+  try {
+    const body = createNewGameRequest.parse(await c.req.json());
 
-  return c.json(
-    {
-      id: crypto.randomUUID(),
-      winner: null,
-      boardSize,
-      status: "IN_PROGRESS" as const,
-    },
-    201,
-  );
+    const gameRound = await insertGameRound(body.boardSideLength);
+
+    return c.json(gameRound, 201);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return c.json(
+        {
+          error: "BAD_REQUEST",
+          details: error.issues.map((e) => ({
+            path: e.path.join("."),
+            message: e.message,
+            code: e.code,
+          })),
+        },
+        400,
+      );
+    }
+    throw error;
+  }
 };
 
 const getGameStatsRoute = createRoute({

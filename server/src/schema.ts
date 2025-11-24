@@ -23,6 +23,8 @@ export const gameRoundSchema = z
     winner: z.string().nullable(),
     boardSize: z.number().min(3).max(15),
     status: gameRoundStatusSchema,
+    createdAt: z.date(),
+    completedAt: z.date().nullable(),
   })
   .openapi({
     type: "object",
@@ -42,3 +44,14 @@ export const gameStatsResponseSchema = z
     title: "GameStatsResponse",
     description: "Statistics about the games played",
   });
+
+export const errorResponseSchema = z.object({
+  error: z.string(),
+  details: z.array(
+    z.object({
+      path: z.string(),
+      message: z.string(),
+      code: z.string(),
+    }),
+  ),
+});

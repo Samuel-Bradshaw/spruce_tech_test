@@ -6,7 +6,6 @@ import {
   timestamp,
   pgEnum,
 } from "drizzle-orm/pg-core";
-import { de } from "zod/v4/locales";
 
 export const gameStatusEnum = pgEnum("game_status", [
   "IN_PROGRESS",

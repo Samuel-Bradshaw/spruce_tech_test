@@ -1,9 +1,15 @@
 import { serve, type ServerType } from "@hono/node-server";
 import { hc } from "hono/client";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import * as gamesDb from "../db/games.js";
 import { gameRoundSchema, gameStatsResponseSchema } from "../schema.js";
 import { setupServer } from "../utils/server-utils.js";
 import gamesRouter from "./games.js";
+import { createMockGameRound } from "../utils/test-utils/db-mocks.js";
+
+vi.mock("../db/games.js", () => ({
+  insertGameRound: vi.fn(),
+}));
 
 describe("Games Resource", () => {
   const testApp = setupServer({
@@ -30,13 +36,20 @@ describe("Games Resource", () => {
   });
 
   it("returns a new game on creation", async () => {
+    const mockGameRound = createMockGameRound({ boardSize: 7 });
+
+    vi.mocked(gamesDb.insertGameRound).mockResolvedValue(mockGameRound);
+
     const res = await client.index.$post({
-      json: { boardSize: 3 },
+      json: { boardSize: 7 },
     });
     const game = await res.json();
 
     expect(res.status).toBe(201);
-    expect(() => gameRoundSchema.parse(game)).not.toThrow();
+    expect(gamesDb.insertGameRound).toHaveBeenCalledWith(7);
+    console.log({ game });
+    const result = gameRoundSchema.parse(game);
+    expect(result.boardSize).toBe(7);
   });
 
   it("returns game stats for all games", async () => {

@@ -5,12 +5,12 @@ import {
   type GameRound,
 } from "./schema.js";
 
-export async function insertGameRound(
-  gameRound: NewGameRoundRequest,
-): Promise<GameRound> {
+export async function insertGameRound(boardSize: number): Promise<GameRound> {
   const [newGame] = await db
     .insert(gameRoundsTable)
-    .values(gameRound)
+    .values({
+      boardSize,
+    })
     .returning();
 
   return newGame;
