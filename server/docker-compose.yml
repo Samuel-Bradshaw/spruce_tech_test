@@ -11,7 +11,7 @@ services:
       - ./src:/app/src
       - /app/node_modules
     env_file:
-      - .env.dev
+      - .env
     depends_on:
       - db
   db:
@@ -22,6 +22,6 @@ services:
     volumes:
       - ./data/index:/var/lib/postgresql/data
     env_file:
-      - .env.dev
+      - .env
     environment:
       - DATABASE_URL=${DATABASE_URL}

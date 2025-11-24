@@ -9,6 +9,9 @@ const envSchema = z.object({
     .default("development"),
   DATABASE_URL: z.string().url().describe("PostgreSQL connection string"),
   PORT: z.coerce.number().int().positive().default(3000),
+  POSTGRES_USER: z.string(),
+  POSTGRES_PASSWORD: z.string(),
+  POSTGRES_DB: z.string(),
 });
 
 export type Env = z.infer<typeof envSchema>;

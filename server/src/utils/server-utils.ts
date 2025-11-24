@@ -1,11 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 
-// type MergeRoutes<T extends Record<string, any>> =
-//   T extends Record<string, infer R>
-//     ? R extends OpenAPIHono<any, any, any>
-//       ? R
-//       : never
-//     : never;
+// extends multiple routes of server into single type
 type MergeRoutes<T extends Record<string, OpenAPIHono>> = T[keyof T];
 
 export function setupServer<const T extends Record<string, OpenAPIHono>>(
