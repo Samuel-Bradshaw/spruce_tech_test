@@ -1,7 +1,7 @@
 import { createRoute, OpenAPIHono, type RouteHandler } from "@hono/zod-openapi";
 import z from "zod";
 import { gameRoundSchema, gameStatsResponseSchema } from "../schema.js";
-import { toJsonBody } from "../json-utils.js";
+import { toJsonBody } from "../utils/json-utils.js";
 
 const createNewGameRequest = z.object({
   boardSize: z.number().min(3).max(15).optional(),
