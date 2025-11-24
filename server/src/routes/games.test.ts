@@ -1,7 +1,6 @@
 import { serve, type ServerType } from "@hono/node-server";
 import { hc } from "hono/client";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import type { AppType } from "../index.js";
 import { gameRoundSchema, gameStatsResponseSchema } from "../schema.js";
 import { setupServer } from "../utils/server-utils.js";
 import gamesRouter from "./games.js";
