@@ -1,41 +1,44 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { XorO, CellState } from "../types";
-import { MIN_BOARD_LENGTH } from "../constants";
 
 type GameSession = {
-  board: CellState[];
-  boardLength: number;
+  board?: CellState[];
+  boardLength?: number;
   activePlayer: XorO;
-  isLoading: boolean;
+  isGameActive: boolean;
   startNewGame: (length: number) => void;
+  finishGame: () => void;
   makeGameMove: (index: number) => void;
 };
 
 const GameSessionContext = createContext<GameSession | undefined>(undefined);
 
 export const GameSessionProvider = ({ children }: { children: ReactNode }) => {
-  const [board, setBoard] = useState<CellState[]>(
-    Array(MIN_BOARD_LENGTH * MIN_BOARD_LENGTH).fill(undefined),
-  );
-  const [boardLength, setBoardLength] = useState<number>(MIN_BOARD_LENGTH);
+  const [board, setBoard] = useState<CellState[]>();
   const [activePlayer, setActivePlayer] = useState<XorO>("X");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isGameActive, setIsGameActive] = useState<boolean>(false);
+
+  const boardLength = board ? Math.sqrt(board.length) : undefined;
 
   const startNewGame = (length: number) => {
-    setBoardLength(length);
     setBoard(Array(length * length).fill(undefined));
     setActivePlayer("X");
-    setIsLoading(false);
+    setIsGameActive(true);
+  };
+
+  const finishGame = () => {
+    setBoard(undefined);
+    setIsGameActive(false);
   };
 
   const makeGameMove = (index: number) => {
     // Cell already occupied
-    if (board[index] !== undefined) return;
+    if (!board || board[index] !== undefined) return;
 
     const newBoard = [...board];
     newBoard[index] = activePlayer;
     setBoard(newBoard);
-    setActivePlayer(activePlayer === "X" ? "O" : "X");
+    setActivePlayer((prev) => (prev === "X" ? "O" : "X"));
   };
 
   return (
@@ -44,8 +47,9 @@ export const GameSessionProvider = ({ children }: { children: ReactNode }) => {
         board,
         boardLength,
         activePlayer,
-        isLoading,
+        isGameActive,
         startNewGame,
+        finishGame,
         makeGameMove,
       }}
     >

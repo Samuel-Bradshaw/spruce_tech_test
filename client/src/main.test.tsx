@@ -21,29 +21,15 @@ describe("Main Component", () => {
     });
 
     it("does not ask for user input when the board length has been set", async () => {
-      const user = userEvent.setup();
       render(<Main />);
-
-      const input = screen.getByLabelText(
-        "Enter board size (the board length):",
-      );
-      await user.clear(input);
-      await user.type(input, "3");
-      const startButton = screen.getByText("Start Game");
-      await user.click(startButton);
+      await startGame();
 
       expect(screen.queryByText("Let's play a new game")).toBeNull();
     });
 
-    it("renders initial 9 game board cells successfully", () => {
+    it("renders all cells as empty initially", async () => {
       render(<Main />);
-
-      const cells = screen.getAllByTestId(/^cell-/);
-      expect(cells).toHaveLength(9);
-    });
-
-    it("renders all cells as empty initially", () => {
-      render(<Main />);
+      await startGame();
 
       const cells = screen.getAllByTestId(/^cell-/);
 
@@ -53,16 +39,8 @@ describe("Main Component", () => {
     });
 
     it("renders correct number of cells for 5x5 board", async () => {
-      const user = userEvent.setup();
       render(<Main />);
-
-      const input = screen.getByLabelText(
-        "Enter board size (the board length):",
-      );
-      await user.clear(input);
-      await user.type(input, "5");
-      const startButton = screen.getByText("Start Game");
-      await user.click(startButton);
+      await startGame("5");
 
       const cells = screen.getAllByTestId(/^cell-/);
       expect(cells).toHaveLength(25);
@@ -71,23 +49,25 @@ describe("Main Component", () => {
 
   describe("Basic Functionality", () => {
     it("renders an X when cell is clicked on", async () => {
-      const user = userEvent.setup();
       render(<Main />);
+      await startGame();
 
       const cell = screen.getByTestId("cell-0");
+      const user = userEvent.setup();
       await user.click(cell);
 
       expect(cell.textContent).toBe("X");
     });
 
     it("toggles active player after clicking a cell", async () => {
-      const user = userEvent.setup();
       render(<Main />);
+      await startGame();
 
       const firstCell = screen.getByTestId("cell-0");
       const secondCell = screen.getByTestId("cell-1");
       const thirdCell = screen.getByTestId("cell-2");
 
+      const user = userEvent.setup();
       await user.click(firstCell);
       await user.click(secondCell);
       await user.click(thirdCell);
@@ -97,10 +77,12 @@ describe("Main Component", () => {
     });
 
     it("blocks a cell after it has been played on", async () => {
-      const user = userEvent.setup();
       render(<Main />);
+      await startGame();
+
       const cell = screen.getByTestId("cell-0");
 
+      const user = userEvent.setup();
       await user.click(cell);
       await user.click(cell);
 
@@ -108,12 +90,13 @@ describe("Main Component", () => {
     });
 
     it("does not toggle the player if clicking on a blocked cell", async () => {
-      const user = userEvent.setup();
       render(<Main />);
+      await startGame();
 
       const firstCell = screen.getByTestId("cell-0");
       const secondCell = screen.getByTestId("cell-1"); //
 
+      const user = userEvent.setup();
       await user.click(firstCell);
       await user.click(firstCell); // Same cell click
       await user.click(secondCell);
@@ -125,16 +108,18 @@ describe("Main Component", () => {
   describe("Winning Conditions", () => {
     it("should not declare a winner at match start", async () => {
       render(<Main />);
+      await startGame();
 
       expect(screen.queryByText(/Player [XO] wins!/)).not.toBeInTheDocument();
     });
 
     it("displays a draw modal when the board is full without a winner", async () => {
-      const user = userEvent.setup();
       render(<Main />);
+      await startGame();
 
       const moves = [0, 1, 2, 4, 3, 5, 7, 6, 8]; // XOXOOXXOX
 
+      const user = userEvent.setup();
       for (const move of moves) {
         const cell = screen.getByTestId(`cell-${move}`);
         await user.click(cell);
@@ -145,13 +130,14 @@ describe("Main Component", () => {
     });
 
     it("displays winner modal when a player wins", async () => {
-      const user = userEvent.setup();
       render(<Main />);
+      await startGame();
 
       const upperLeftCell = screen.getByTestId("cell-0");
       const middleLeftCell = screen.getByTestId("cell-3");
       const lowerLeftCell = screen.getByTestId("cell-6");
 
+      const user = userEvent.setup();
       await user.click(upperLeftCell);
       await user.click(screen.getByTestId("cell-2"));
       await user.click(middleLeftCell);
@@ -165,13 +151,14 @@ describe("Main Component", () => {
 
   describe("Reset Functionality", () => {
     it("resets the board when 'Play Again' is clicked", async () => {
-      const user = userEvent.setup();
       render(<Main />);
+      await startGame();
 
       const upperLeftCell = screen.getByTestId("cell-0");
       const middleLeftCell = screen.getByTestId("cell-3");
       const lowerLeftCell = screen.getByTestId("cell-6");
 
+      const user = userEvent.setup();
       await user.click(upperLeftCell);
       await user.click(screen.getByTestId("cell-2"));
       await user.click(middleLeftCell);
@@ -181,20 +168,18 @@ describe("Main Component", () => {
       const playAgainButton = await screen.findByText("Play Again");
       await user.click(playAgainButton);
 
-      const cells = screen.getAllByTestId(/^cell-/);
-      cells.forEach((cell) => {
-        expect(cell.textContent).toBe("");
-      });
+      expect(screen.queryAllByTestId(/^cell-/)?.length).toEqual(0);
     });
 
     it("resets to the active player being X", async () => {
-      const user = userEvent.setup();
       render(<Main />);
+      await startGame();
 
       const upperLeftCell = screen.getByTestId("cell-0");
       const middleLeftCell = screen.getByTestId("cell-3");
       const lowerLeftCell = screen.getByTestId("cell-6");
 
+      const user = userEvent.setup();
       await user.click(upperLeftCell);
       await user.click(screen.getByTestId("cell-2"));
       await user.click(middleLeftCell);
@@ -204,19 +189,22 @@ describe("Main Component", () => {
       const playAgainButton = screen.getByText("Play Again");
       await user.click(playAgainButton);
 
+      await startGame();
+
       const firstCell = screen.getByTestId("cell-0");
       await user.click(firstCell);
       expect(firstCell.textContent).toBe("X");
     });
 
     it("resets the board length and game outcome", async () => {
-      const user = userEvent.setup();
       render(<Main />);
+      await startGame();
 
       const upperLeftCell = screen.getByTestId("cell-0");
       const middleLeftCell = screen.getByTestId("cell-3");
       const lowerLeftCell = screen.getByTestId("cell-6");
 
+      const user = userEvent.setup();
       await user.click(upperLeftCell);
       await user.click(screen.getByTestId("cell-2"));
       await user.click(middleLeftCell);
@@ -230,3 +218,14 @@ describe("Main Component", () => {
     });
   });
 });
+
+async function startGame(boardLength = "3") {
+  const input = screen.getByLabelText("Enter board size (the board length):");
+
+  const user = userEvent.setup();
+  await user.clear(input);
+  await user.type(input, boardLength);
+
+  const startButton = screen.getByText("Start Game");
+  await user.click(startButton);
+}

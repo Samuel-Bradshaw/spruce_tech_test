@@ -2,21 +2,19 @@ import React from "react";
 import { GameResult, XorO } from "../types";
 import { Modal } from "./ui/Modal";
 import { Button } from "./ui/Button";
+import { useGameSession } from "../providers/game-session";
+import { getIfGameOutcome } from "../utils/game-outcome-utils";
 
-type OutcomeViewProps = {
-  outcome: GameResult;
-  resetBoard: () => void;
-};
+export function OutcomeView(): React.JSX.Element {
+  const { finishGame, board } = useGameSession();
+  const outcome = board && getIfGameOutcome(board);
+  if (!outcome) return <></>;
 
-export function OutcomeView({
-  outcome,
-  resetBoard,
-}: OutcomeViewProps): React.JSX.Element {
   if (outcome == "TIE") {
     return (
       <Modal>
         <DrawMessage />
-        <Button onClick={resetBoard}>Play Again</Button>
+        <Button onClick={finishGame}>Play Again</Button>
       </Modal>
     );
   }
@@ -24,7 +22,7 @@ export function OutcomeView({
   return (
     <Modal>
       <PlayerWinMessage winner={outcome} />
-      <Button onClick={resetBoard}>Play Again</Button>
+      <Button onClick={finishGame}>Play Again</Button>
     </Modal>
   );
 }

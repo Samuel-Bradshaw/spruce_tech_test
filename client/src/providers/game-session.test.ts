@@ -10,7 +10,7 @@ describe("useGameSession", () => {
     });
 
     expect(result.current.activePlayer).toBe("X");
-    expect(result.current.board).toEqual(Array(9).fill(undefined));
+    expect(result.current.board).toBeUndefined();
   });
 
   it("starts a new game successfully", async () => {
@@ -27,7 +27,7 @@ describe("useGameSession", () => {
     expect(result.current.board).toEqual(Array(25).fill(undefined));
   });
 
-  it("toggles correct state change after a move", () => {
+  it("should not toggle state change if board is empty", () => {
     const { result } = renderHook(() => useGameSession(), {
       wrapper: GameSessionProvider,
     });
@@ -36,11 +36,22 @@ describe("useGameSession", () => {
       result.current.makeGameMove(3);
     });
 
-    expect(result.current.board[3]).toBe("X");
+    expect(result.current.activePlayer).toBe("X");
+    expect(result.current.board).toBeUndefined();
+  });
+
+  it("should toggle state change if game is started", () => {
+    const { result } = renderHook(() => useGameSession(), {
+      wrapper: GameSessionProvider,
+    });
+
+    act(() => {
+      result.current.startNewGame(5);
+      result.current.makeGameMove(3);
+    });
+
     expect(result.current.activePlayer).toBe("O");
-    const emptyCellsCount = result.current.board.filter(
-      (cell) => cell !== undefined,
-    ).length;
-    expect(emptyCellsCount).toBe(1);
+    expect(result.current.board?.length).toEqual(25);
+    expect(result.current.board?.[3]).toBe("X");
   });
 });

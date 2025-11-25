@@ -4,25 +4,20 @@ import { MIN_BOARD_LENGTH } from "../constants";
 import { Modal } from "./ui/Modal";
 import { validateNumberInput } from "../utils/validation-utils";
 import { ErrorAlert } from "./ui/ErrorAlert";
+import { useGameSession } from "../providers/game-session";
 
-type UserInputProps = {
-  setBoardLength: React.Dispatch<React.SetStateAction<number | undefined>>;
-  isOpen: boolean;
-};
-
-export function UserInput({
-  setBoardLength,
-  isOpen,
-}: UserInputProps): React.JSX.Element {
-  const [lengthInput, setLengthInput] = React.useState<string>(
+export function UserInput(): React.JSX.Element {
+  const { startNewGame, isGameActive } = useGameSession();
+  const [input, setLengthInput] = React.useState<string>(
     String(MIN_BOARD_LENGTH),
   );
   const [errorMessage, setErrorMessage] = React.useState<string>("");
 
   const handleSubmit = (_: React.MouseEvent<HTMLButtonElement>) => {
     try {
-      const sanitisedInput = validateNumberInput(lengthInput);
-      setBoardLength(sanitisedInput);
+      const sanitisedInput = validateNumberInput(input);
+      setErrorMessage("");
+      startNewGame(sanitisedInput);
     } catch (error) {
       setErrorMessage(
         "Invalid Input. Only valid numbers between 3 and 15 are allowed.",
@@ -31,14 +26,14 @@ export function UserInput({
   };
 
   return (
-    <Modal isOpen={isOpen}>
+    <Modal isOpen={!isGameActive}>
       <h2>Let's play a new game</h2>
       <label htmlFor="board-size-input">
         Enter board size (the board length):
       </label>
       <input
         id="board-size-input"
-        value={lengthInput}
+        value={input}
         min={MIN_BOARD_LENGTH}
         onChange={(e) => {
           setLengthInput(e.target.value);
