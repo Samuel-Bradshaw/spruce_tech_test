@@ -1,7 +1,5 @@
-import { vi } from "vitest";
-import type { DbType } from "../../db/client.js";
-import type { GameMove, GameRound } from "../../db/schema.js";
-import type { GameStats } from "../../rest-schema.js";
+import type { GameMove } from "../../db/schema.js";
+import type { GameRound, GameStats } from "../../types/api-types.js";
 
 export function createMockGameRound(overrides?: Partial<GameRound>): GameRound {
   const defaultGameRound: GameRound = {
@@ -33,21 +31,7 @@ export function createMockGameStats(overrides?: Partial<GameStats>): GameStats {
   };
 }
 
-export function mockDbInsert(db: DbType, returnValue: GameRound | GameRound[]) {
-  const mockReturning = vi
-    .fn()
-    .mockResolvedValue(
-      Array.isArray(returnValue) ? returnValue : [returnValue],
-    );
-  const mockValues = vi.fn().mockReturnValue({ returning: mockReturning });
-  const mockInsert = vi.fn().mockReturnValue({ values: mockValues });
-
-  db.insert = mockInsert;
-
-  return { mockInsert, mockValues, mockReturning };
-}
-
-export function mockGameMove(overrides?: Partial<GameMove>): GameMove {
+export function createMockGameMove(overrides?: Partial<GameMove>): GameMove {
   const gameMove: GameMove = {
     id: "string",
     gameId: "string",

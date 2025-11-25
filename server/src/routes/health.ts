@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, type RouteHandler } from "@hono/zod-openapi";
-import { healthResponseSchema } from "../rest-schema.js";
+import { healthResponseSchema } from "../types/zod-schema.js";
 
 const healthRoute = createRoute({
   tags: ["Health"],

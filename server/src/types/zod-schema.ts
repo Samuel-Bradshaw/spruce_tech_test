@@ -1,4 +1,5 @@
 import { z } from "@hono/zod-openapi";
+import { MAX_BOARD_SIZE, MIN_BOARD_SIZE } from "../config/constants.js";
 
 export const healthResponseSchema = z
   .object({
@@ -9,23 +10,21 @@ export const healthResponseSchema = z
     description: "A simple health check response",
   });
 
-export const gameRoundStatusSchema = z
-  .enum(["IN_PROGRESS", "COMPLETED"])
-  .openapi({
-    type: "string",
-    title: "GameRoundStatus",
-    description: "The status of a game round",
-  });
+export const gameStatusSchema = z.enum(["IN_PROGRESS", "COMPLETED"]).openapi({
+  type: "string",
+  title: "GameRoundStatus",
+  description: "The status of a game round",
+});
 
-const MIN_BOARD_SIZE = 3 * 3;
-const MAX_BOARD_SIZE = 15 * 15;
+export const playerEnum = z.enum(["X", "O"]);
+export const gameOutcomes = z.union([playerEnum, z.literal("TIE")]);
 
-export const gameRoundSchema = z
+export const gameSchema = z
   .object({
     id: z.string().uuid(),
-    winner: z.string().nullable(),
+    winner: gameOutcomes.nullable(),
     boardSize: z.number().min(MIN_BOARD_SIZE).max(MAX_BOARD_SIZE),
-    status: gameRoundStatusSchema,
+    status: gameStatusSchema,
     createdAt: z.coerce.date(),
     completedAt: z.coerce.date().nullable(),
   })
@@ -44,11 +43,9 @@ export const gameStatsSchema = z
   })
   .openapi({
     type: "object",
-    title: "GameStatsResponse",
+    title: "GameStats",
     description: "Statistics about the games played",
   });
-
-export type GameStats = z.infer<typeof gameStatsSchema>;
 
 export const errorResponseSchema = z.object({
   error: z.string(),
@@ -59,4 +56,13 @@ export const errorResponseSchema = z.object({
       code: z.string(),
     }),
   ),
+});
+
+export const createNewGameRequest = z.object({
+  boardSideLength: z.number().min(3).max(15),
+});
+
+export const updateGameWinnerRequest = z.object({
+  gameId: z.string().uuid(),
+  winner: gameOutcomes,
 });

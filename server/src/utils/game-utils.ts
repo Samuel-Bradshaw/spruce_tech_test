@@ -1,5 +1,5 @@
 import type { GameRound } from "../db/schema.js";
-import type { GameStats } from "../rest-schema.js";
+import type { GameStats } from "../types/api-types.js";
 
 export function calculateGameStats(allGames: GameRound[]) {
   const initialStats: GameStats = {

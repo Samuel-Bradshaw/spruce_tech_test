@@ -8,7 +8,7 @@ export function setupServer<const T extends Record<string, OpenAPIHono>>(
 ) {
   const app = new OpenAPIHono();
 
-  let routes: any = app;
+  let routes = app;
   for (const [basePath, router] of Object.entries(routeMapping)) {
     routes = routes.route(basePath, router);
   }

@@ -13,12 +13,13 @@ export const gameStatusEnum = pgEnum("game_status", [
   "COMPLETED",
 ]);
 
-export const playerEnum = pgEnum("player", ["X", "O"]);
+const playerEnum = pgEnum("player", ["X", "O"]);
+const outcomeEnum = pgEnum("game_outcome", ["X", "O", "TIE"]);
 
 export const games = pgTable("games", {
   id: uuid("id").primaryKey().defaultRandom(),
   boardSize: integer("board_size").notNull(),
-  winner: varchar("winner", { length: 1 }),
+  winner: outcomeEnum("winner"),
   status: gameStatusEnum("status").notNull().default("IN_PROGRESS"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   completedAt: timestamp("completed_at"),
@@ -46,6 +47,3 @@ export const gameRelations = relations(moves, ({ one }) => ({
 
 export type GameMove = typeof moves.$inferSelect;
 export type AddMoveRequest = typeof moves.$inferInsert;
-
-export type GameRound = typeof games.$inferSelect;
-export type NewGameRequest = typeof games.$inferInsert;

@@ -2,14 +2,14 @@ import { serve, type ServerType } from "@hono/node-server";
 import { hc } from "hono/client";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import * as gamesDb from "../db/games-dal.js";
-import { gameRoundSchema } from "../rest-schema.js";
 import { setupServer } from "../utils/server-utils.js";
+import gamesRouter from "./games-route.js";
+import { gameSchema } from "../types/zod-schema.js";
 import {
+  createMockGameMove,
   createMockGameRound,
   createMockGameStats,
-  mockGameMove,
 } from "../utils/test-utils/db-mocks.js";
-import gamesRouter from "./games-route.js";
 
 vi.mock("../db/games-dal.js", () => ({
   insertGame: vi.fn(),
@@ -53,7 +53,7 @@ describe("Games Resource", () => {
     expect(gamesDb.insertGame).toHaveBeenCalledWith(7);
 
     expect(res.status).toBe(201);
-    const result = gameRoundSchema.parse(await res.json());
+    const result = gameSchema.parse(await res.json());
     expect(result.boardSize).toBe(49); // 7x7 board should have 49 cells
     expect(result.status).toEqual("IN_PROGRESS");
     expect(result.winner).toBeNull();
@@ -78,7 +78,7 @@ describe("Games Resource", () => {
 
     expect(res.status).toBe(200);
     const body = await res.json();
-    const result = gameRoundSchema.parse(body);
+    const result = gameSchema.parse(body);
     expect(result.winner).toBe("X");
     expect(result.status).toBe("COMPLETED");
   });
@@ -106,7 +106,7 @@ describe("Games Resource", () => {
   });
 
   it("it returns an inserted move for a specific game", async () => {
-    const mockMove = mockGameMove({
+    const mockMove = createMockGameMove({
       boardState: ["X", null, null, null, null, null, null, null, null],
     });
     vi.mocked(gamesDb.insertGameMove).mockResolvedValue(mockMove);

@@ -1,10 +1,12 @@
 import { createRoute, OpenAPIHono, type RouteHandler } from "@hono/zod-openapi";
 import z from "zod";
 import {
+  createNewGameRequest,
   errorResponseSchema,
-  gameRoundSchema,
+  gameSchema,
   gameStatsSchema,
-} from "../rest-schema.js";
+  updateGameWinnerRequest,
+} from "../types/zod-schema.js";
 import { toJsonBody } from "../utils/json-utils.js";
 import {
   getAllGames,
@@ -14,10 +16,6 @@ import {
 } from "../db/games-dal.js";
 import { calculateGameStats } from "../utils/game-utils.js";
 
-const createNewGameRequest = z.object({
-  boardSideLength: z.number().min(3).max(15),
-});
-
 const createGameRoute = createRoute({
   tags: ["Games"],
   method: "post",
@@ -26,13 +24,12 @@ const createGameRoute = createRoute({
     body: toJsonBody(createNewGameRequest, "Create new game request body"),
   },
   responses: {
-    201: toJsonBody(gameRoundSchema, "Game round created successfully"),
+    201: toJsonBody(gameSchema, "Game round created successfully"),
     400: toJsonBody(errorResponseSchema, "Bad request"),
   },
 });
 
-type CreateGameRoute = typeof createGameRoute;
-const createGameHandler: RouteHandler<CreateGameRoute> = async (c) => {
+const createGameHandler: RouteHandler<typeof createGameRoute> = async (c) => {
   try {
     const body = createNewGameRequest.parse(await c.req.json());
     const gameRound = await insertGame(body.boardSideLength);
@@ -57,11 +54,6 @@ const createGameHandler: RouteHandler<CreateGameRoute> = async (c) => {
   }
 };
 
-const updateGameWinnerRequest = z.object({
-  gameId: z.string().uuid(),
-  winner: z.enum(["X", "O", "TIE"]),
-});
-
 const updateGameWinnerRoute = createRoute({
   tags: ["Games"],
   method: "put",
@@ -73,15 +65,14 @@ const updateGameWinnerRoute = createRoute({
     ),
   },
   responses: {
-    200: toJsonBody(gameRoundSchema, "Game winner updated successfully"),
+    200: toJsonBody(gameSchema, "Game winner updated successfully"),
     400: toJsonBody(errorResponseSchema, "Bad request"),
   },
 });
 
-type UpdateGameWinnerRoute = typeof updateGameWinnerRoute;
-const updateGameWinnerHandler: RouteHandler<UpdateGameWinnerRoute> = async (
-  c,
-) => {
+const updateGameWinnerHandler: RouteHandler<
+  typeof updateGameWinnerRoute
+> = async (c) => {
   try {
     const body = updateGameWinnerRequest.parse(await c.req.json());
     const updatedGameRound = await updateGameWinner(body.gameId, body.winner);
@@ -113,8 +104,9 @@ const getGameStatsRoute = createRoute({
   },
 });
 
-type GetGameStatsRoute = typeof getGameStatsRoute;
-const getGameStatsHandler: RouteHandler<GetGameStatsRoute> = async (c) => {
+const getGameStatsHandler: RouteHandler<typeof getGameStatsRoute> = async (
+  c,
+) => {
   const allGames = await getAllGames();
   const stats = calculateGameStats(allGames);
   return c.json(stats, 200);

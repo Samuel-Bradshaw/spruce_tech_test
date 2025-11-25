@@ -1,12 +1,7 @@
 import { eq } from "drizzle-orm";
 import db from "./client.js";
-import {
-  moves,
-  games,
-  type GameRound,
-  type AddMoveRequest,
-  type GameMove,
-} from "./schema.js";
+import { moves, games, type AddMoveRequest, type GameMove } from "./schema.js";
+import { type GameRound } from "../types/api-types.js";
 
 export async function insertGame(boardSideLength: number): Promise<GameRound> {
   const boardSize = boardSideLength * boardSideLength;
