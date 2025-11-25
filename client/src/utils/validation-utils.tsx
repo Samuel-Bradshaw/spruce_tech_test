@@ -1,7 +1,7 @@
 import { MAX_BOARD_LENGTH, MIN_BOARD_LENGTH } from "../constants";
 import { toInteger } from "lodash";
 
-export function sanitiseNumberInput(lengthStr: string): number {
+export function validateNumberInput(lengthStr: string): number {
   const lengthNum = toInteger(lengthStr);
   if (
     isNaN(lengthNum) ||

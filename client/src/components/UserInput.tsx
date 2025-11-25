@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "./ui/Button";
 import { MIN_BOARD_LENGTH } from "../constants";
 import { Modal } from "./ui/Modal";
-import { sanitiseNumberInput } from "../utils/sanitation-utils";
+import { validateNumberInput } from "../utils/validation-utils";
 import { ErrorAlert } from "./ui/ErrorAlert";
 
 type UserInputProps = {
@@ -21,7 +21,7 @@ export function UserInput({
 
   const handleSubmit = (_: React.MouseEvent<HTMLButtonElement>) => {
     try {
-      const sanitisedInput = sanitiseNumberInput(lengthInput);
+      const sanitisedInput = validateNumberInput(lengthInput);
       setBoardLength(sanitisedInput);
     } catch (error) {
       setErrorMessage(

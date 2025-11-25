@@ -6,6 +6,7 @@ import { GameBoard } from "./components/game/GameBoard";
 import { UserInput } from "./components/UserInput";
 import { MIN_BOARD_LENGTH } from "./constants";
 import { getEmptyBoard } from "./utils/board-utils";
+import { GameSessionProvider } from "./providers/game-session";
 
 export const Main = () => {
   const [boardLength, setBoardLength] = useState<number | undefined>();
@@ -30,12 +31,12 @@ export const Main = () => {
   const gameOutcome = useMemo(() => getIfGameOutcome(board), [board]);
 
   return (
-    <>
+    <GameSessionProvider>
       <UserInput setBoardLength={setBoardLength} isOpen={!boardLength} />
       {<GameBoard key={resetKey} board={board} updateBoard={setBoard} />}
       {gameOutcome && (
         <OutcomeView outcome={gameOutcome} resetBoard={resetBoard} />
       )}
-    </>
+    </GameSessionProvider>
   );
 };
