@@ -1,6 +1,7 @@
 import { vi } from "vitest";
 import type { DbType } from "../../db/client.js";
 import type { GameRound } from "../../db/schema.js";
+import type { GameStats } from "../../rest-schema.js";
 
 export function createMockGameRound(overrides?: Partial<GameRound>): GameRound {
   const defaultGameRound: GameRound = {
@@ -14,6 +15,20 @@ export function createMockGameRound(overrides?: Partial<GameRound>): GameRound {
 
   return {
     ...defaultGameRound,
+    ...overrides,
+  };
+}
+
+export function createMockGameStats(overrides?: Partial<GameStats>): GameStats {
+  const defaultStats: GameStats = {
+    totalGames: 0,
+    playerXWins: 0,
+    playerOWins: 0,
+    totalDraws: 0,
+  };
+
+  return {
+    ...defaultStats,
     ...overrides,
   };
 }

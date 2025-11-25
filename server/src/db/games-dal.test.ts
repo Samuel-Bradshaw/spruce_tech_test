@@ -33,4 +33,14 @@ describe("Games DB Tests", () => {
     expect(result.winner).toBe("X");
     expect(result.status).toBe("COMPLETED");
   });
+
+  it("gets all games", async () => {
+    const mockGameRounds = [createMockGameRound(), createMockGameRound()];
+
+    vi.spyOn(gamesDb, "getAllGames").mockResolvedValue(mockGameRounds);
+
+    const result = await gamesDb.getAllGames();
+
+    expect(result).toEqual(mockGameRounds);
+  });
 });

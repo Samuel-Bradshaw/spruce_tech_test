@@ -3,10 +3,15 @@ import z from "zod";
 import {
   errorResponseSchema,
   gameRoundSchema,
-  gameStatsResponseSchema,
+  gameStatsSchema,
 } from "../rest-schema.js";
 import { toJsonBody } from "../utils/json-utils.js";
-import { insertGameRound, updateGameWinner } from "../db/games-dal.js";
+import {
+  getAllGames,
+  insertGameRound,
+  updateGameWinner,
+} from "../db/games-dal.js";
+import { calculateGameStats } from "../utils/game-utils.js";
 
 const createNewGameRequest = z.object({
   boardSideLength: z.number().min(3).max(15),
@@ -29,7 +34,6 @@ type CreateGameRoute = typeof createGameRoute;
 const createGameHandler: RouteHandler<CreateGameRoute> = async (c) => {
   try {
     const body = createNewGameRequest.parse(await c.req.json());
-
     const gameRound = await insertGameRound(body.boardSideLength);
 
     return c.json(gameRound, 201);
@@ -104,21 +108,15 @@ const getGameStatsRoute = createRoute({
   method: "get",
   path: `/stats`,
   responses: {
-    200: toJsonBody(gameStatsResponseSchema, "Win/Loss game statistics"),
+    200: toJsonBody(gameStatsSchema, "Win/Loss game statistics"),
   },
 });
 type GetGameStatsRoute = typeof getGameStatsRoute;
 
 const getGameStatsHandler: RouteHandler<GetGameStatsRoute> = async (c) => {
-  return c.json(
-    {
-      totalGames: 42,
-      playerXWins: 20,
-      playerOWins: 15,
-      totalDraws: 7,
-    },
-    200,
-  );
+  const allGames = await getAllGames();
+  const stats = calculateGameStats(allGames);
+  return c.json(stats, 200);
 };
 
 const gamesRouter = new OpenAPIHono()

@@ -33,3 +33,7 @@ export async function updateGameWinner(
       return updatedGame;
     });
 }
+
+export async function getAllGames(): Promise<GameRound[]> {
+  return db.select().from(gameRoundsTable);
+}

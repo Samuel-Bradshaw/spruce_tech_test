@@ -2,14 +2,18 @@ import { serve, type ServerType } from "@hono/node-server";
 import { hc } from "hono/client";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import * as gamesDb from "../db/games-dal.js";
-import { gameRoundSchema, gameStatsResponseSchema } from "../rest-schema.js";
+import { gameRoundSchema } from "../rest-schema.js";
 import { setupServer } from "../utils/server-utils.js";
 import gamesRouter from "./games-route.js";
-import { createMockGameRound } from "../utils/test-utils/db-mocks.js";
+import {
+  createMockGameRound,
+  createMockGameStats,
+} from "../utils/test-utils/db-mocks.js";
 
 vi.mock("../db/games-dal.js", () => ({
   insertGameRound: vi.fn(),
   updateGameWinner: vi.fn(),
+  getAllGames: vi.fn(),
 }));
 
 describe("Games Resource", () => {
@@ -72,18 +76,31 @@ describe("Games Resource", () => {
 
     expect(res.status).toBe(200);
     const body = await res.json();
-    console.log({ body });
     const result = gameRoundSchema.parse(body);
     expect(result.winner).toBe("X");
     expect(result.status).toBe("COMPLETED");
   });
 
-  it.skip("returns game stats for all games", async () => {
+  it("returns game stats for all games", async () => {
+    const expectedResult = createMockGameStats({
+      totalGames: 3,
+      playerOWins: 1,
+      playerXWins: 2,
+      totalDraws: 0,
+    });
+
+    const mockRounds = [
+      createMockGameRound({ winner: "X", status: "COMPLETED" }),
+      createMockGameRound({ winner: "O", status: "COMPLETED" }),
+      createMockGameRound({ winner: "X", status: "COMPLETED" }),
+    ];
+    vi.mocked(gamesDb.getAllGames).mockResolvedValue(mockRounds);
+
     const res = await client.stats.$get();
     const stats = await res.json();
 
     expect(res.status).toBe(200);
-    expect(() => gameStatsResponseSchema.parse(stats)).not.toThrow();
+    expect(stats).toEqual(expectedResult);
   });
 
   it.skip("it registers a move successfully", () => {

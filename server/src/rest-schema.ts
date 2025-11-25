@@ -35,7 +35,7 @@ export const gameRoundSchema = z
     description: "A round of a tic-tac-toe game with its status",
   });
 
-export const gameStatsResponseSchema = z
+export const gameStatsSchema = z
   .object({
     totalGames: z.number().min(0),
     playerXWins: z.number().min(0),
@@ -47,6 +47,8 @@ export const gameStatsResponseSchema = z
     title: "GameStatsResponse",
     description: "Statistics about the games played",
   });
+
+export type GameStats = z.infer<typeof gameStatsSchema>;
 
 export const errorResponseSchema = z.object({
   error: z.string(),
