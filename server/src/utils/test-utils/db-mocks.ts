@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 import type { DbType } from "../../db/client.js";
-import type { GameRound } from "../../db/schema.js";
+import type { GameMove, GameRound } from "../../db/schema.js";
 import type { GameStats } from "../../rest-schema.js";
 
 export function createMockGameRound(overrides?: Partial<GameRound>): GameRound {
@@ -45,4 +45,20 @@ export function mockDbInsert(db: DbType, returnValue: GameRound | GameRound[]) {
   db.insert = mockInsert;
 
   return { mockInsert, mockValues, mockReturning };
+}
+
+export function mockGameMove(overrides?: Partial<GameMove>): GameMove {
+  const gameMove: GameMove = {
+    id: "string",
+    gameId: "string",
+    lastPlayer: "X",
+    lastPlayedPosition: 4,
+    boardState: Array(9).fill(null),
+    createdAt: new Date(),
+  };
+  const mockRounds = {
+    ...gameMove,
+    ...overrides,
+  };
+  return mockRounds;
 }

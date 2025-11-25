@@ -1,7 +1,8 @@
 import type { GameRound } from "../db/schema.js";
+import type { GameStats } from "../rest-schema.js";
 
 export function calculateGameStats(allGames: GameRound[]) {
-  const initialStats = {
+  const initialStats: GameStats = {
     totalGames: 0,
     playerXWins: 0,
     playerOWins: 0,

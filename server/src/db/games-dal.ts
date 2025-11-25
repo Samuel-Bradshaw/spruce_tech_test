@@ -1,30 +1,31 @@
 import { eq } from "drizzle-orm";
 import db from "./client.js";
-import { gamesTable, type GameRound } from "./schema.js";
+import {
+  moves,
+  games,
+  type GameRound,
+  type AddMoveRequest,
+  type GameMove,
+} from "./schema.js";
 
-export async function insertGameRound(
-  boardSideLength: number,
-): Promise<GameRound> {
+export async function insertGame(boardSideLength: number): Promise<GameRound> {
   const boardSize = boardSideLength * boardSideLength;
-  const [newGame] = await db
-    .insert(gamesTable)
-    .values({ boardSize })
-    .returning();
+  const [newGame] = await db.insert(games).values({ boardSize }).returning();
 
   return newGame;
 }
 export async function updateGameWinner(
   gameId: string,
-  updateGameWinner: "X" | "O" | "TIE",
+  gameWinner: "X" | "O" | "TIE",
 ): Promise<GameRound> {
-  return db
-    .update(gamesTable)
+  return await db
+    .update(games)
     .set({
-      winner: updateGameWinner,
+      winner: gameWinner,
       completedAt: new Date(),
       status: "COMPLETED",
     })
-    .where(eq(gamesTable.id, gameId))
+    .where(eq(games.id, gameId))
     .returning()
     .then(([updatedGame]) => {
       if (!updatedGame) {
@@ -35,5 +36,15 @@ export async function updateGameWinner(
 }
 
 export async function getAllGames(): Promise<GameRound[]> {
-  return db.select().from(gamesTable);
+  return await db.select().from(games);
+}
+
+export async function insertGameMove(
+  newMove: AddMoveRequest,
+): Promise<GameMove> {
+  return await db
+    .insert(moves)
+    .values(newMove)
+    .returning()
+    .then(([move]) => move);
 }

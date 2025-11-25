@@ -8,9 +8,9 @@ describe("Games DB Tests", () => {
   it("calls insertGameRound with correct data when creating a new game", async () => {
     const mockGameRound = createMockGameRound();
 
-    vi.spyOn(gamesDb, "insertGameRound").mockResolvedValue(mockGameRound);
+    vi.spyOn(gamesDb, "insertGame").mockResolvedValue(mockGameRound);
 
-    const result = await gamesDb.insertGameRound(5);
+    const result = await gamesDb.insertGame(5);
 
     expect(result).toEqual(mockGameRound);
   });

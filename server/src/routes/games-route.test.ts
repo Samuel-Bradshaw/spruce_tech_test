@@ -4,16 +4,18 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import * as gamesDb from "../db/games-dal.js";
 import { gameRoundSchema } from "../rest-schema.js";
 import { setupServer } from "../utils/server-utils.js";
-import gamesRouter from "./games-route.js";
 import {
   createMockGameRound,
   createMockGameStats,
+  mockGameMove,
 } from "../utils/test-utils/db-mocks.js";
+import gamesRouter from "./games-route.js";
 
 vi.mock("../db/games-dal.js", () => ({
-  insertGameRound: vi.fn(),
+  insertGame: vi.fn(),
   updateGameWinner: vi.fn(),
   getAllGames: vi.fn(),
+  insertGameMove: vi.fn(),
 }));
 
 describe("Games Resource", () => {
@@ -21,7 +23,7 @@ describe("Games Resource", () => {
     "/": gamesRouter,
   });
 
-  const client = hc<typeof testApp>("http://localhost:9001");
+  const client = hc<typeof testApp>(`http://localhost:9001`);
 
   let server: ServerType | undefined;
   beforeAll(async () => {
@@ -42,13 +44,13 @@ describe("Games Resource", () => {
 
   it("returns a new game on creation", async () => {
     const mockGameRound = createMockGameRound({ boardSize: 49 });
-    vi.mocked(gamesDb.insertGameRound).mockResolvedValue(mockGameRound);
+    vi.mocked(gamesDb.insertGame).mockResolvedValue(mockGameRound);
 
     const res = await client.index.$post({
       json: { boardSideLength: 7 },
     });
 
-    expect(gamesDb.insertGameRound).toHaveBeenCalledWith(7);
+    expect(gamesDb.insertGame).toHaveBeenCalledWith(7);
 
     expect(res.status).toBe(201);
     const result = gameRoundSchema.parse(await res.json());
@@ -103,11 +105,18 @@ describe("Games Resource", () => {
     expect(stats).toEqual(expectedResult);
   });
 
-  it.skip("it registers a move successfully", () => {
-    console.log("skipped");
-  });
+  it("it returns an inserted move for a specific game", async () => {
+    const mockMove = mockGameMove({
+      boardState: ["X", null, null, null, null, null, null, null, null],
+    });
+    vi.mocked(gamesDb.insertGameMove).mockResolvedValue(mockMove);
 
-  it.skip("it returns the fastest for a player", () => {
-    console.log("skipped");
+    const res = await client[":gameId"].move.$post({
+      json: { player: "X", positionPlayed: 0, board: Array(9).fill(null) },
+      param: { gameId: "test-game-id" },
+    });
+
+    expect(res.status).toBe(201);
+    expect(await res.json()).toEqual({ boardState: mockMove.boardState });
   });
 });

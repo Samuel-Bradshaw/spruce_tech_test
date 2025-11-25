@@ -1,4 +1,18 @@
 
+JUAN'S NOTES
+
+- Game logic: could do with just a 3 in-line win condition for simplicity (even with bigger boards)
+- What about responsiveness?
+
+- Could add a strikethrough line on win?
+- What about always starting with X?
+- Would be nice to be more explicit about the modals open status
+
+- BE: Security, better SoC with services.
+
+
+
+
 # Tic-Tac-Toe
 The below problems are to allow us a glimpse into your problem solving ability, style and current skill set. Vibe coding is allowed but we are looking for good taste, brevity and clarity in your code. 
 
