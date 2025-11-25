@@ -1,13 +1,13 @@
 import { eq } from "drizzle-orm";
 import db from "./client.js";
-import { gameRoundsTable, type GameRound } from "./schema.js";
+import { gamesTable, type GameRound } from "./schema.js";
 
 export async function insertGameRound(
   boardSideLength: number,
 ): Promise<GameRound> {
   const boardSize = boardSideLength * boardSideLength;
   const [newGame] = await db
-    .insert(gameRoundsTable)
+    .insert(gamesTable)
     .values({ boardSize })
     .returning();
 
@@ -18,13 +18,13 @@ export async function updateGameWinner(
   updateGameWinner: "X" | "O" | "TIE",
 ): Promise<GameRound> {
   return db
-    .update(gameRoundsTable)
+    .update(gamesTable)
     .set({
       winner: updateGameWinner,
       completedAt: new Date(),
       status: "COMPLETED",
     })
-    .where(eq(gameRoundsTable.id, gameId))
+    .where(eq(gamesTable.id, gameId))
     .returning()
     .then(([updatedGame]) => {
       if (!updatedGame) {
@@ -35,5 +35,5 @@ export async function updateGameWinner(
 }
 
 export async function getAllGames(): Promise<GameRound[]> {
-  return db.select().from(gameRoundsTable);
+  return db.select().from(gamesTable);
 }

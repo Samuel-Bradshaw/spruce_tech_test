@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   pgTable,
   uuid,
@@ -14,7 +15,7 @@ export const gameStatusEnum = pgEnum("game_status", [
 
 export const playerEnum = pgEnum("player", ["X", "O"]);
 
-export const gameRoundsTable = pgTable("game_rounds", {
+export const gamesTable = pgTable("games", {
   id: uuid("id").primaryKey().defaultRandom(),
   boardSize: integer("board_size").notNull(),
   winner: varchar("winner", { length: 1 }),
@@ -23,7 +24,29 @@ export const gameRoundsTable = pgTable("game_rounds", {
   completedAt: timestamp("completed_at"),
 });
 
-export type GameRound = typeof gameRoundsTable.$inferSelect;
-export type NewGameRoundRequest = typeof gameRoundsTable.$inferInsert;
+export const gameMoves = pgTable("game_moves", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  gameId: uuid("game_id")
+    .notNull()
+    .references(() => gamesTable.id),
+  currentPlayer: playerEnum("current_layer").notNull(),
+  nextPlayer: playerEnum("next_player").notNull(),
+  lastPlayedPosition: integer("last_played_position").notNull(),
+  boardState: varchar("board_state", { length: 250 })
+    .array()
+    .$type<string[] | undefined>(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
 
-export default gameRoundsTable;
+export const gameRelations = relations(gameMoves, ({ one }) => ({
+  author: one(gamesTable, {
+    fields: [gameMoves.gameId],
+    references: [gamesTable.id],
+  }),
+}));
+
+export type GameMove = typeof gameMoves.$inferSelect;
+export type NewGameMoveRequest = typeof gameMoves.$inferInsert;
+
+export type GameRound = typeof gamesTable.$inferSelect;
+export type NewGameRoundRequest = typeof gamesTable.$inferInsert;
