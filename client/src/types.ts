@@ -1,5 +1,4 @@
 import type {
-  AppType,
   ErrorResponse,
   GameResult,
   GameRound,
@@ -11,7 +10,6 @@ import type {
 export type CellState = XorO | undefined;
 
 export type {
-  AppType,
   ErrorResponse,
   GameResult,
   GameRound,

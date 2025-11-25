@@ -3,11 +3,10 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { serve, type ServerType } from "@hono/node-server";
 import healthRouter from "../routes/health.js";
 import { setupServer } from "../utils/server-utils.js";
+import { OpenAPIHono } from "@hono/zod-openapi";
 
 describe("Health endpoint", () => {
-  const testApp = setupServer({
-    "/": healthRouter,
-  });
+  const testApp = new OpenAPIHono().route("/", healthRouter);
 
   const client = hc<typeof testApp>("http://localhost:9000");
 

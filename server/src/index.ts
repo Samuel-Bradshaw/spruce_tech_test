@@ -1,15 +1,14 @@
 import { serve } from "@hono/node-server";
+import { OpenAPIHono } from "@hono/zod-openapi";
 import { env } from "./config/env.js";
 import gamesRouter from "./routes/games-route.js";
 import healthRouter from "./routes/health.js";
-import { setupServer } from "./utils/server-utils.js";
 
-const routeMap = {
-  "/api/v1/health": healthRouter,
-  "/api/v1/games": gamesRouter,
-};
+const app = new OpenAPIHono();
 
-export const routes = setupServer(routeMap);
+export const routes = app
+  .route("/api/v1/health", healthRouter)
+  .route("/api/v1/games", gamesRouter);
 
 serve(
   {
@@ -22,3 +21,4 @@ serve(
 );
 
 export * from "./types/api-types.js";
+export type AppType = typeof routes;

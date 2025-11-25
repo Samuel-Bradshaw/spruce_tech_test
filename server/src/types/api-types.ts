@@ -25,8 +25,3 @@ export type GameResult = z.infer<typeof gameOutcomes>;
 export type NewGameRequest = z.infer<typeof createNewGameRequest>;
 export type UpdateGameWinnerRequest = z.infer<typeof updateGameWinnerRequest>;
 export type ErrorResponse = z.infer<typeof errorResponseSchema>;
-
-// Type utils
-
-// Export AppType for RPC client
-export type AppType = typeof routes;

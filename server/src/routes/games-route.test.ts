@@ -10,6 +10,7 @@ import {
   createMockGameRound,
   createMockGameStats,
 } from "../utils/test-utils/db-mocks.js";
+import { OpenAPIHono } from "@hono/zod-openapi";
 
 vi.mock("../db/games-dal.js", () => ({
   insertGame: vi.fn(),
@@ -19,9 +20,7 @@ vi.mock("../db/games-dal.js", () => ({
 }));
 
 describe("Games Resource", () => {
-  const testApp = setupServer({
-    "/": gamesRouter,
-  });
+  const testApp = new OpenAPIHono().route("/", gamesRouter);
 
   const client = hc<typeof testApp>(`http://localhost:9001`);
 
@@ -30,7 +29,7 @@ describe("Games Resource", () => {
     server = serve(
       {
         fetch: testApp.fetch,
-        port: 9001,
+        port: 9999,
       },
       () => {},
     );
