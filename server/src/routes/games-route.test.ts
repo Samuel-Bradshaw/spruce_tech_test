@@ -1,14 +1,15 @@
 import { serve, type ServerType } from "@hono/node-server";
 import { hc } from "hono/client";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import * as gamesDb from "../db/games.js";
-import { gameRoundSchema, gameStatsResponseSchema } from "../schema.js";
+import * as gamesDb from "../db/games-dal.js";
+import { gameRoundSchema, gameStatsResponseSchema } from "../rest-schema.js";
 import { setupServer } from "../utils/server-utils.js";
-import gamesRouter from "./games.js";
+import gamesRouter from "./games-route.js";
 import { createMockGameRound } from "../utils/test-utils/db-mocks.js";
 
-vi.mock("../db/games.js", () => ({
+vi.mock("../db/games-dal.js", () => ({
   insertGameRound: vi.fn(),
+  updateGameWinner: vi.fn(),
 }));
 
 describe("Games Resource", () => {
@@ -50,6 +51,31 @@ describe("Games Resource", () => {
     expect(result.boardSize).toBe(49); // 7x7 board should have 49 cells
     expect(result.status).toEqual("IN_PROGRESS");
     expect(result.winner).toBeNull();
+  });
+
+  it("updates a new game with a winner", async () => {
+    const mockUpdatedRound = createMockGameRound({
+      winner: "X",
+      status: "COMPLETED",
+      completedAt: new Date(),
+    });
+    vi.mocked(gamesDb.updateGameWinner).mockResolvedValue(mockUpdatedRound);
+
+    const res = await client.winner.$put({
+      json: { winner: "X", gameId: mockUpdatedRound.id },
+    });
+
+    expect(gamesDb.updateGameWinner).toHaveBeenCalledWith(
+      mockUpdatedRound.id,
+      "X",
+    );
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    console.log({ body });
+    const result = gameRoundSchema.parse(body);
+    expect(result.winner).toBe("X");
+    expect(result.status).toBe("COMPLETED");
   });
 
   it.skip("returns game stats for all games", async () => {

@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import { env } from "./config/env.js";
-import gamesRouter from "./routes/games.js";
+import gamesRouter from "./routes/games-route.js";
 import healthRouter from "./routes/health.js";
 import { setupServer } from "./utils/server-utils.js";
 
