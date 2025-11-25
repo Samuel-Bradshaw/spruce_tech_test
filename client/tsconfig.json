@@ -5,6 +5,10 @@
     "jsx": "react",
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "baseUrl": ".",
+    "paths": {
+      "@server/*": ["../server/src/*"]
+    }
   }
 }

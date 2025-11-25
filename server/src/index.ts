@@ -9,7 +9,7 @@ const routeMap = {
   "/api/v1/games": gamesRouter,
 };
 
-const routes = setupServer(routeMap);
+export const routes = setupServer(routeMap);
 
 serve(
   {
@@ -21,8 +21,4 @@ serve(
   },
 );
 
-export default routes;
-
-// Export types, and AppType for RPC client
-export type AppType = typeof routes;
 export * from "./types/api-types.js";
