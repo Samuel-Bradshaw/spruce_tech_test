@@ -2,7 +2,6 @@ import { serve, type ServerType } from "@hono/node-server";
 import { hc } from "hono/client";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import * as gamesDb from "../db/games-dal.js";
-import { setupServer } from "../utils/server-utils.js";
 import gamesRouter from "./games-route.js";
 import { gameSchema } from "../types/zod-schema.js";
 import {
@@ -22,7 +21,7 @@ vi.mock("../db/games-dal.js", () => ({
 describe("Games Resource", () => {
   const testApp = new OpenAPIHono().route("/", gamesRouter);
 
-  const client = hc<typeof testApp>(`http://localhost:9001`);
+  const client = hc<typeof testApp>(`http://localhost:9999`);
 
   let server: ServerType | undefined;
   beforeAll(async () => {

@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const tailwindcss = require("tailwindcss");
 const webpack = require("webpack");
+const path = require("path");
 
 module.exports = (env) => ({
   mode: "development",
@@ -42,6 +43,12 @@ module.exports = (env) => ({
     extensions: [".ts", ".tsx", ".js", ".css"],
     alias: {
       "@server": path.resolve(__dirname, "../server/src"),
+    },
+    fallback: {
+      path: false,
+      os: false,
+      crypto: false,
+      fs: false,
     },
   },
   plugins: [

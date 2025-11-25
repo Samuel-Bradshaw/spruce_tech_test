@@ -1,5 +1,5 @@
 import { z } from "@hono/zod-openapi";
-import { MAX_BOARD_SIZE, MIN_BOARD_SIZE } from "../config/constants.js";
+import { MIN_BOARD_SIZE, MAX_BOARD_SIZE } from "../config/constants";
 
 export const healthResponseSchema = z
   .object({

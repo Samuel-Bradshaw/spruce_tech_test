@@ -20,5 +20,4 @@ serve(
   },
 );
 
-export * from "./types/api-types.js";
 export type AppType = typeof routes;
