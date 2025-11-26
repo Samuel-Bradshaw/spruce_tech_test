@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { XorO, CellState } from "../types";
+import React, { createContext, ReactNode, useContext, useState } from "react";
+import { CellState, XorO } from "../types";
+import { makeMove, startGame } from "../services/hono-client";
 
 type GameSession = {
   board?: CellState[];
@@ -17,13 +18,16 @@ export const GameSessionProvider = ({ children }: { children: ReactNode }) => {
   const [board, setBoard] = useState<CellState[]>();
   const [activePlayer, setActivePlayer] = useState<XorO>("X");
   const [isGameActive, setIsGameActive] = useState<boolean>(false);
+  const [gameId, setGameId] = useState<string>();
 
   const boardLength = board ? Math.sqrt(board.length) : undefined;
 
-  const startNewGame = (length: number) => {
-    setBoard(Array(length * length).fill(undefined));
-    setActivePlayer("X");
+  const startNewGame = async (length: number) => {
+    const newGame = await startGame(length);
     setIsGameActive(true);
+    setActivePlayer("X");
+    setGameId(newGame.id);
+    setBoard(Array(newGame.boardSize).fill(undefined));
   };
 
   const finishGame = () => {
@@ -31,11 +35,12 @@ export const GameSessionProvider = ({ children }: { children: ReactNode }) => {
     setIsGameActive(false);
   };
 
-  const makeGameMove = (index: number) => {
-    // Cell already occupied
-    if (!board || board[index] !== undefined) return;
+  const makeGameMove = async (index: number) => {
+    if (!gameId) return;
+    if (!board || board[index] !== undefined) return; // Cell already occupied
 
-    const newBoard = [...board];
+    const newBoard = await makeMove(gameId, activePlayer, index, board);
+
     newBoard[index] = activePlayer;
     setBoard(newBoard);
     setActivePlayer((prev) => (prev === "X" ? "O" : "X"));
