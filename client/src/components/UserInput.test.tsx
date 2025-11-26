@@ -4,7 +4,6 @@ import userEvent from "@testing-library/user-event";
 import React from "react";
 import { UserInput } from "./UserInput";
 import { GameSessionProvider } from "../providers/game-session";
-import { useGameSession } from "../providers/game-session";
 
 describe("User Input", () => {
   it("renders successfully", () => {
@@ -60,7 +59,6 @@ describe("User Input", () => {
     await user.type(input, "2");
     await user.click(startButton);
 
-    // expect(screen.getByText(/error/i)).toBeInTheDocument();
     expect(mockSetBoardLength).not.toHaveBeenCalled();
   });
 

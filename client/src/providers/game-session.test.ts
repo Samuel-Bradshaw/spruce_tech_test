@@ -1,8 +1,29 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import * as honoClient from "../services/hono-client";
+import {
+  mockCompletedGame,
+  mockGameMove,
+  mockNewGame,
+} from "../utils/test-mocks";
 import { GameSessionProvider, useGameSession } from "./game-session";
 
+jest.mock("../services/hono-client", () => ({
+  __esModule: true,
+  default: {},
+  startGame: jest.fn(),
+  makeMove: jest.fn(),
+  declareWinner: jest.fn(),
+}));
+
 describe("useGameSession", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (honoClient.startGame as jest.Mock).mockImplementation(mockNewGame);
+    (honoClient.makeMove as jest.Mock).mockImplementation(mockGameMove());
+    (honoClient.declareWinner as jest.Mock).mockResolvedValue(
+      mockCompletedGame(),
+    );
+  });
 
   it("initializes with null game and no loading/error state", () => {
     const { result } = renderHook(() => useGameSession(), {
@@ -18,8 +39,8 @@ describe("useGameSession", () => {
       wrapper: GameSessionProvider,
     });
 
-    act(() => {
-      result.current.startNewGame(5);
+    await act(async () => {
+      await result.current.startNewGame(5);
     });
 
     expect(result.current.activePlayer).toBe("X");
@@ -40,18 +61,23 @@ describe("useGameSession", () => {
     expect(result.current.board).toBeUndefined();
   });
 
-  it("should toggle state change if game is started", () => {
+  it("should toggle state change if game is started", async () => {
     const { result } = renderHook(() => useGameSession(), {
       wrapper: GameSessionProvider,
     });
 
-    act(() => {
-      result.current.startNewGame(5);
-      result.current.makeGameMove(3);
+    await act(async () => {
+      await result.current.startNewGame(5);
     });
 
-    expect(result.current.activePlayer).toBe("O");
-    expect(result.current.board?.length).toEqual(25);
-    expect(result.current.board?.[3]).toBe("X");
+    await act(async () => {
+      await result.current.makeGameMove(3);
+    });
+
+    await waitFor(() => {
+      expect(result.current.activePlayer).toBe("O");
+      expect(result.current.board?.length).toEqual(25);
+      expect(result.current.board?.[3]).toBe("X");
+    });
   });
 });

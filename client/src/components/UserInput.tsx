@@ -7,7 +7,7 @@ import { ErrorAlert } from "./ui/ErrorAlert";
 import { useGameSession } from "../providers/game-session";
 
 export function UserInput(): React.JSX.Element {
-  const { startNewGame, isGameActive } = useGameSession();
+  const { startNewGame, gameId } = useGameSession();
   const [input, setLengthInput] = React.useState<string>(
     String(MIN_BOARD_LENGTH),
   );
@@ -26,7 +26,7 @@ export function UserInput(): React.JSX.Element {
   };
 
   return (
-    <Modal isOpen={!isGameActive}>
+    <Modal isOpen={!gameId}>
       <h2>Let's play a new game</h2>
       <label htmlFor="board-size-input">
         Enter board size (the board length):

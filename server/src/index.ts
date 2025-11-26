@@ -4,6 +4,8 @@ import { cors } from "hono/cors";
 import { env } from "./env.js";
 import gamesRouter from "./routes/games-route.js";
 import healthRouter from "./routes/health.js";
+import { openAPIRouteHandler } from "hono-openapi";
+import { configureOpenAPI } from "./utils/server-utils.js";
 
 const app = new OpenAPIHono();
 
@@ -19,9 +21,23 @@ app.use(
   }),
 );
 
+const openApiHandler = openAPIRouteHandler(app, {
+  documentation: {
+    info: {
+      title: "Tic-Tac-Toe API",
+      version: "0.0.0",
+      description: "Tic-Tac-Toe API",
+    },
+    servers: [{ url: "http://localhost:3000", description: "Local Server" }],
+  },
+});
+
 export const routes = app
   .route("/api/v1/health", healthRouter)
-  .route("/api/v1/games", gamesRouter);
+  .route("/api/v1/games", gamesRouter)
+  .get("/open-api", openApiHandler);
+
+configureOpenAPI(app);
 
 serve(
   {

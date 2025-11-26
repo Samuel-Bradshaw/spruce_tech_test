@@ -5,4 +5,7 @@ module.exports = {
   transform: {
     "^.+\\.tsx?$": "ts-jest",
   },
+  moduleNameMapper: {
+    "^@server/(.*)$": "<rootDir>/../server/src/$1",
+  },
 };

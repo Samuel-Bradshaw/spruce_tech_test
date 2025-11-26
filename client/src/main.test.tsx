@@ -3,8 +3,31 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { Main } from "./main";
+import * as honoClient from "./services/hono-client";
+import {
+  mockCompletedGame,
+  mockGameMove,
+  mockNewGame,
+} from "./utils/test-mocks";
+
+jest.mock("./services/hono-client", () => ({
+  __esModule: true,
+  default: {},
+  startGame: jest.fn(),
+  makeMove: jest.fn(),
+  declareWinner: jest.fn(),
+}));
 
 describe("Main Component", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (honoClient.startGame as jest.Mock).mockImplementation(mockNewGame);
+    (honoClient.makeMove as jest.Mock).mockImplementation(mockGameMove());
+    (honoClient.declareWinner as jest.Mock).mockResolvedValue(
+      mockCompletedGame(),
+    );
+  });
+
   describe("Initial Load", () => {
     it("renders the game title", () => {
       render(<Main />);
@@ -217,15 +240,15 @@ describe("Main Component", () => {
       expect(screen.getByText("Let's play a new game")).toBeVisible();
     });
   });
+
+  async function startGame(boardLength = "3") {
+    const input = screen.getByLabelText("Enter board size (the board length):");
+
+    const user = userEvent.setup();
+    await user.clear(input);
+    await user.type(input, boardLength);
+
+    const startButton = screen.getByText("Start Game");
+    await user.click(startButton);
+  }
 });
-
-async function startGame(boardLength = "3") {
-  const input = screen.getByLabelText("Enter board size (the board length):");
-
-  const user = userEvent.setup();
-  await user.clear(input);
-  await user.type(input, boardLength);
-
-  const startButton = screen.getByText("Start Game");
-  await user.click(startButton);
-}
