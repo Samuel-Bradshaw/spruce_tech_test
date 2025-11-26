@@ -1,6 +1,6 @@
 import React from "react";
 import { GameCell } from "./GameCell";
-import { useGameSession } from "../../providers/game-session";
+import { useGameSession } from "../../hooks/useGameSession";
 import { MIN_BOARD_LENGTH } from "../../constants";
 
 export function GameBoard() {

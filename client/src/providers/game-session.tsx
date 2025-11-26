@@ -1,8 +1,8 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useState } from "react";
 import { CellState, XorO } from "../types";
 import { declareWinner, makeMove, startGame } from "../services/hono-client";
 
-type GameSession = {
+export type GameSession = {
   board?: CellState[];
   boardLength?: number;
   activePlayer: XorO;
@@ -12,9 +12,19 @@ type GameSession = {
   makeGameMove: (index: number) => void;
 };
 
-const GameSessionContext = createContext<GameSession | undefined>(undefined);
+export const GameSessionContext = createContext<GameSession | undefined>(
+  undefined,
+);
 
-export const GameSessionProvider = ({ children }: { children: ReactNode }) => {
+type GameSessionProviderProps = {
+  children: ReactNode;
+  onGameFinished?: () => void;
+};
+
+export const GameSessionProvider = ({
+  children,
+  onGameFinished,
+}: GameSessionProviderProps) => {
   const [board, setBoard] = useState<CellState[]>();
   const [activePlayer, setActivePlayer] = useState<XorO>("X");
   const [gameId, setGameId] = useState<string>();
@@ -28,11 +38,12 @@ export const GameSessionProvider = ({ children }: { children: ReactNode }) => {
     setBoard(Array(newGame.boardSize).fill(undefined));
   };
 
-  const finishGame = () => {
+  const finishGame = async () => {
     if (!gameId) return;
-    declareWinner(gameId, activePlayer);
+    await declareWinner(gameId, activePlayer);
     setGameId(undefined);
     setBoard(undefined);
+    onGameFinished?.();
   };
 
   const makeGameMove = async (index: number) => {
@@ -61,12 +72,4 @@ export const GameSessionProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </GameSessionContext.Provider>
   );
-};
-
-export const useGameSession = (): GameSession => {
-  const context = useContext(GameSessionContext);
-  if (!context) {
-    throw new Error("useGameSession must be used within a GameSessionProvider");
-  }
-  return context;
 };

@@ -1,7 +1,11 @@
 import { AppType } from "@server/index";
-import { boardSchema, gameSchema } from "@server/types/zod-schema";
+import {
+  boardSchema,
+  gameSchema,
+  gameStatsSchema,
+} from "@server/types/zod-schema";
 import { hc } from "hono/client";
-import { CellState, GameResult, GameRound, XorO } from "src/types";
+import { CellState, GameResult, GameRound, GameStats, XorO } from "src/types";
 import z from "zod";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
@@ -64,6 +68,22 @@ export async function declareWinner(
 
     const data = await response.json();
     return gameSchema.parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw new Error(
+        `Invalid game data received from server. Error: ${error.message}`,
+      );
+    }
+    throw new Error("Failed to start a new game");
+  }
+}
+
+export async function fetchGameStats(): Promise<GameStats> {
+  try {
+    return await honoClient.api.v1.games.stats.$get().then(async (res) => {
+      const data = await res.json();
+      return gameStatsSchema.parse(data);
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new Error(

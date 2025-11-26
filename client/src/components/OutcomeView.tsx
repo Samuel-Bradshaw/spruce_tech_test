@@ -1,8 +1,8 @@
 import React from "react";
-import { GameResult, XorO } from "../types";
+import { XorO } from "../types";
 import { Modal } from "./ui/Modal";
 import { Button } from "./ui/Button";
-import { useGameSession } from "../providers/game-session";
+import { useGameSession } from "../hooks/useGameSession";
 import { getIfGameOutcome } from "../utils/game-outcome-utils";
 
 export function OutcomeView(): React.JSX.Element {

@@ -22,7 +22,7 @@ describe("User Input", () => {
 
     const mockStartNewGame = jest.fn();
     jest
-      .spyOn(require("../providers/game-session"), "useGameSession")
+      .spyOn(require("../hooks/useGameSession"), "useGameSession")
       .mockReturnValue({
         board: undefined,
         boardLength: undefined,
@@ -110,7 +110,7 @@ describe("User Input", () => {
       const user = userEvent.setup();
 
       jest
-        .spyOn(require("../providers/game-session"), "useGameSession")
+        .spyOn(require("../hooks/useGameSession"), "useGameSession")
         .mockReturnValue({
           board: undefined,
           boardLength: undefined,

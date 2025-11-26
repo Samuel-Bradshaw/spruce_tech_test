@@ -1,10 +1,10 @@
 import React from "react";
-import { Button } from "./ui/Button";
 import { MIN_BOARD_LENGTH } from "../constants";
-import { Modal } from "./ui/Modal";
+import { useGameSession } from "../hooks/useGameSession";
 import { validateNumberInput } from "../utils/validation-utils";
+import { Button } from "./ui/Button";
 import { ErrorAlert } from "./ui/ErrorAlert";
-import { useGameSession } from "../providers/game-session";
+import { Modal } from "./ui/Modal";
 
 export function UserInput(): React.JSX.Element {
   const { startNewGame, gameId } = useGameSession();

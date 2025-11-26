@@ -5,7 +5,8 @@ import {
   mockGameMove,
   mockNewGame,
 } from "../utils/test-mocks";
-import { GameSessionProvider, useGameSession } from "./game-session";
+import { GameSessionProvider } from "../providers/game-session";
+import { useGameSession } from "./useGameSession";
 
 jest.mock("../services/hono-client", () => ({
   __esModule: true,

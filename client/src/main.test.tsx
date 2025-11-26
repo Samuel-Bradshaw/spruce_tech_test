@@ -16,6 +16,7 @@ jest.mock("./services/hono-client", () => ({
   startGame: jest.fn(),
   makeMove: jest.fn(),
   declareWinner: jest.fn(),
+  fetchGameStats: jest.fn(),
 }));
 
 describe("Main Component", () => {
