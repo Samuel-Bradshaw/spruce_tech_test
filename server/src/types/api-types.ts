@@ -1,6 +1,6 @@
 import type { z } from "zod";
-import type { routes } from "../index.js";
 import type {
+  boardSchema,
   createNewGameRequest,
   errorResponseSchema,
   gameOutcomes,
@@ -9,6 +9,7 @@ import type {
   gameStatusSchema,
   healthResponseSchema,
   playerEnum,
+  registerMoveRequest,
   updateGameWinnerRequest,
 } from "./zod-schema.js";
 
@@ -25,3 +26,5 @@ export type GameResult = z.infer<typeof gameOutcomes>;
 export type NewGameRequest = z.infer<typeof createNewGameRequest>;
 export type UpdateGameWinnerRequest = z.infer<typeof updateGameWinnerRequest>;
 export type ErrorResponse = z.infer<typeof errorResponseSchema>;
+export type RegisterMoveRequest = z.infer<typeof registerMoveRequest>;
+export type Board = z.infer<typeof boardSchema>;

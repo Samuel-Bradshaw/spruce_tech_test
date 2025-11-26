@@ -13,8 +13,8 @@ export const gameStatusEnum = pgEnum("game_status", [
   "COMPLETED",
 ]);
 
-const playerEnum = pgEnum("player", ["X", "O"]);
-const outcomeEnum = pgEnum("game_outcome", ["X", "O", "TIE"]);
+export const playerEnum = pgEnum("player", ["X", "O"]);
+export const outcomeEnum = pgEnum("game_outcome", ["X", "O", "TIE"]);
 
 export const games = pgTable("games", {
   id: uuid("id").primaryKey().defaultRandom(),

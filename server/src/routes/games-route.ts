@@ -1,10 +1,12 @@
 import { createRoute, OpenAPIHono, type RouteHandler } from "@hono/zod-openapi";
 import z from "zod";
 import {
+  boardSchema,
   createNewGameRequest,
   errorResponseSchema,
   gameSchema,
   gameStatsSchema,
+  registerMoveRequest,
   updateGameWinnerRequest,
 } from "../types/zod-schema.js";
 import { toJsonBody } from "../utils/json-utils.js";
@@ -112,15 +114,6 @@ const getGameStatsHandler: RouteHandler<typeof getGameStatsRoute> = async (
   return c.json(stats, 200);
 };
 
-const registerMoveRequest = z.object({
-  player: z.enum(["X", "O"]),
-  positionPlayed: z.int().nonnegative(),
-  board: z.array(z.enum(["X", "O"]).nullable()),
-});
-
-const boardSchema = z.object({
-  boardState: z.array(z.enum(["X", "O"]).nullable()),
-});
 const registerMoveToGameRoute = createRoute({
   tags: ["Games"],
   method: "post",

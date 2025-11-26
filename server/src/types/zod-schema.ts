@@ -1,5 +1,7 @@
 import { z } from "@hono/zod-openapi";
-import { MIN_BOARD_SIZE, MAX_BOARD_SIZE } from "../config/constants";
+
+const MIN_BOARD_SIZE = 3 * 3;
+const MAX_BOARD_SIZE = 15 * 15;
 
 export const healthResponseSchema = z
   .object({
@@ -65,4 +67,14 @@ export const createNewGameRequest = z.object({
 export const updateGameWinnerRequest = z.object({
   gameId: z.string().uuid(),
   winner: gameOutcomes,
+});
+
+export const registerMoveRequest = z.object({
+  player: z.enum(["X", "O"]),
+  positionPlayed: z.int().nonnegative(),
+  board: z.array(z.enum(["X", "O"]).nullable()),
+});
+
+export const boardSchema = z.object({
+  boardState: z.array(z.enum(["X", "O"]).nullable()),
 });
