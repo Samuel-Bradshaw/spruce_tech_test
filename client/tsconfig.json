@@ -6,5 +6,10 @@
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "strictNullChecks": true,
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "paths": {
+      "@server/*": ["../server/src/*"]
+    }
   }
 }

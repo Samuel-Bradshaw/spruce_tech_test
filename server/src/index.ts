@@ -1,0 +1,52 @@
+import { serve } from "@hono/node-server";
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { cors } from "hono/cors";
+import { env } from "./env.js";
+import gamesRouter from "./routes/games-route.js";
+import healthRouter from "./routes/health.js";
+import { openAPIRouteHandler } from "hono-openapi";
+import { configureOpenAPI } from "./utils/server-utils.js";
+
+const app = new OpenAPIHono();
+
+// Use only in localhost, very permissive CORS policy
+app.use(
+  "/*",
+  cors({
+    origin: "*",
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    exposeHeaders: ["Content-Length"],
+    credentials: true,
+  }),
+);
+
+const openApiHandler = openAPIRouteHandler(app, {
+  documentation: {
+    info: {
+      title: "Tic-Tac-Toe API",
+      version: "0.0.0",
+      description: "Tic-Tac-Toe API",
+    },
+    servers: [{ url: "http://localhost:3000", description: "Local Server" }],
+  },
+});
+
+export const routes = app
+  .route("/api/v1/health", healthRouter)
+  .route("/api/v1/games", gamesRouter)
+  .get("/open-api", openApiHandler);
+
+configureOpenAPI(app);
+
+serve(
+  {
+    fetch: routes.fetch,
+    port: env.PORT,
+  },
+  (info) => {
+    console.log(`🚀 Server is running on http://localhost:${info.port}`);
+  },
+);
+
+export type AppType = typeof routes;

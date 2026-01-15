@@ -1,0 +1,43 @@
+{
+  "name": "server",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest",
+    "test:watch": "vitest watch",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "docker:build": "docker compose up --build -d",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:db:generate": "docker compose exec app npm run db:generate",
+    "docker:db:migrate": "docker compose exec app npm run db:migrate",
+    "docker:db:push": "docker compose exec app npm run db:push"
+  },
+  "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.1.0",
+    "@hono/node-server": "^1.19.6",
+    "@hono/standard-validator": "^0.1.5",
+    "@hono/zod-openapi": "^1.1.5",
+    "@scalar/hono-api-reference": "^0.9.25",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.7",
+    "drizzle-orm": "^0.44.7",
+    "hono": "^4.10.6",
+    "hono-openapi": "^1.1.1",
+    "pg": "^8.16.3",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "@types/pg": "^8.15.6",
+    "@vitest/ui": "^4.0.13",
+    "tsx": "^4.7.1",
+    "typescript": "^5.8.3",
+    "vitest": "^4.0.13"
+  }
+}
