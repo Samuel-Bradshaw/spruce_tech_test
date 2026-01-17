@@ -1,5 +1,12 @@
-import { type FC, useCallback, useRef } from "react";
+import { type FC, useLayoutEffect, useRef, useState } from "react";
 import type { BoardState } from "./types";
+
+type LineCoords = {
+	x1: number;
+	y1: number;
+	x2: number;
+	y2: number;
+};
 
 type BoardProps = {
 	board: BoardState;
@@ -17,10 +24,12 @@ export const Board: FC<BoardProps> = ({
 	const boardSize = Math.sqrt(board.length);
 	const gridRef = useRef<HTMLDivElement>(null);
 	const cellRefs = useRef<(HTMLButtonElement | null)[]>([]);
+	const [coords, setCoords] = useState<LineCoords | null>(null);
 
-	const getLineCoords = useCallback(() => {
+	useLayoutEffect(() => {
 		if (!winningLine || winningLine.length < 2 || !gridRef.current) {
-			return null;
+			setCoords(null);
+			return;
 		}
 
 		const gridRect = gridRef.current.getBoundingClientRect();
@@ -28,7 +37,8 @@ export const Board: FC<BoardProps> = ({
 		const lastCell = cellRefs.current[winningLine[winningLine.length - 1]];
 
 		if (!firstCell || !lastCell) {
-			return null;
+			setCoords(null);
+			return;
 		}
 
 		const firstRect = firstCell.getBoundingClientRect();
@@ -39,27 +49,29 @@ export const Board: FC<BoardProps> = ({
 		const x2 = lastRect.left + lastRect.width / 2 - gridRect.left;
 		const y2 = lastRect.top + lastRect.height / 2 - gridRect.top;
 
-		// Extend line past cell centers by this fraction of the cell size
+		// Make line 0.3 cell width past the centre of the end cells
 		const extension = 0.3;
 		const dx = x2 - x1;
 		const dy = y2 - y1;
 		const length = Math.sqrt(dx * dx + dy * dy);
+
+		// in jsdom `getBoundingClientRec`t returns zeros
+		if (length === 0) {
+			setCoords({ x1, y1, x2, y2 });
+			return;
+		}
+
 		const extendBy = firstRect.width * extension;
 		const ux = (dx / length) * extendBy;
 		const uy = (dy / length) * extendBy;
 
-		return {
+		setCoords({
 			x1: x1 - ux,
 			y1: y1 - uy,
 			x2: x2 + ux,
 			y2: y2 + uy,
-		};
+		});
 	}, [winningLine]);
-
-	/**
-	 * End coords of the winning line, if any.
-	 */
-	const coords = winningLine ? getLineCoords() : null;
 
 	return (
 		<div className="relative" ref={gridRef}>
