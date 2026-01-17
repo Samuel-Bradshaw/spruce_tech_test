@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
-import { BoardState, DRAW, GameResult, XorO } from "./types";
+import { type BoardState, DRAW, type GameResult, type XorO } from "./types";
 
 /**
  * For the given board state, get the number of turns that have happened.
  */
 export const getNumTurns = (grid: BoardState) => {
 	return grid.filter((cell) => cell !== undefined).length;
-}
+};
 
 /**
  * For the given board state, get which player should go next.
@@ -15,7 +15,7 @@ export const getNextPlayer = (grid: BoardState, firstPlayer: XorO): XorO => {
 	const secondPlayer = firstPlayer === "X" ? "O" : "X";
 	const turns = getNumTurns(grid);
 	return turns % 2 === 0 ? firstPlayer : secondPlayer;
-}
+};
 
 /**
  * An array of indexes representing a winning line.
@@ -25,10 +25,10 @@ type WinningLine = number[];
 /**
  * For the given board size (where 3 corresponds to 3x3, 4 to 4x4 etc),
  * generate the winning lines on the board.
- * 
+ *
  * Each line is an array with length matching the boardSize,
  * where each element is an index of the board's array.
- * 
+ *
  * There will be a winning line for each diagonal,
  * each row, and each column.
  */
@@ -74,20 +74,21 @@ export const getWinningLines = (boardSize: number): WinningLine[] => {
  * Based on the current board state and the available winning lines,
  * gets the game winner, if any.
  */
-export const getWinner = (board: BoardState, winningLines: WinningLine[]): XorO | null => {
-	for(const winningLine of winningLines) {
+export const getWinner = (
+	board: BoardState,
+	winningLines: WinningLine[],
+): XorO | null => {
+	for (const winningLine of winningLines) {
 		const player = board[winningLine[0]];
-		if(!player) continue;
+		if (!player) continue;
 
-		if(winningLine.every(
-			(cellIndex) => board[cellIndex] === player
-		)) {
+		if (winningLine.every((cellIndex) => board[cellIndex] === player)) {
 			return player;
 		}
 	}
 
 	return null;
-}
+};
 
 /**
  * Whether or not every position on the board has been filled.
@@ -100,35 +101,29 @@ export const isBoardFilled = (board: BoardState): boolean =>
  * and making moves.
  */
 export const useTicTacToe = (boardSize: number, firstPlayer: XorO) => {
-	const [board, setBoard] = useState<BoardState>(
-		() => new Array(boardSize * boardSize).fill(undefined)
+	const [board, setBoard] = useState<BoardState>(() =>
+		new Array(boardSize * boardSize).fill(undefined),
 	);
-	
-	const winningLines = useMemo(
-		() => getWinningLines(boardSize),
-		[boardSize]
-	);
+
+	const winningLines = useMemo(() => getWinningLines(boardSize), [boardSize]);
 
 	const nextPlayer = getNextPlayer(board, firstPlayer);
 	const winner = getWinner(board, winningLines);
-	
+
 	/**
 	 * Result of the game, or `null` if the game has not yet ended.
 	 * GameResult will be truthy including in the case of a draw.
 	 */
-	const gameResult: GameResult | null = winner || (
-		isBoardFilled(board) ? DRAW : null
-	)
-	
+	const gameResult: GameResult | null =
+		winner || (isBoardFilled(board) ? DRAW : null);
+
 	const setCell = (cellIndex: number, player: XorO) => {
-		setBoard(
-			(prevBoard) => {
-				const newBoard = [...prevBoard];
-				newBoard[cellIndex] = player;
-				return newBoard;
-			}
-		)
-	}
+		setBoard((prevBoard) => {
+			const newBoard = [...prevBoard];
+			newBoard[cellIndex] = player;
+			return newBoard;
+		});
+	};
 
 	return {
 		board,
@@ -136,5 +131,4 @@ export const useTicTacToe = (boardSize: number, firstPlayer: XorO) => {
 		nextPlayer,
 		gameResult,
 	} as const;
-	
-}
+};

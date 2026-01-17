@@ -1,4 +1,4 @@
-import React, { FC, useRef } from "react";
+import { type FC, useRef } from "react";
 import { ConfirmDialog } from "../ConfirmDialog";
 
 type NewGameButtonProps = {
@@ -11,6 +11,7 @@ export const NewGameButton: FC<NewGameButtonProps> = ({ onReset }) => {
 	return (
 		<>
 			<button
+				type="button"
 				onClick={() => dialogRef.current?.showModal()}
 				className="mb-6 px-4 py-2 bg-gray-800 text-white font-medium rounded hover:bg-gray-700 transition-colors"
 			>

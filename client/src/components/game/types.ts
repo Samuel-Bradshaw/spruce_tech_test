@@ -1,4 +1,4 @@
-export type XorO = 'X' | 'O';
+export type XorO = "X" | "O";
 /**
  * The state of the board as an immutable 1-D array.
  */
