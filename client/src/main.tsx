@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { XorO } from './types'
+import { XorO } from './board/types'
 import { Board } from './board/Board'
 
 export const Main = () => {

@@ -1,6 +1,6 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
-import { BoardState, XorO } from "../types";
-import { getNextPlayer, getWinner, getWinningLines, isBoardFilled } from "./utils";
+import React, { FC, useEffect } from "react";
+import { GameResult, XorO } from "./types";
+import { useTicTacToe } from "./useTicTacToe";
 
 type BoardProps = {
 	/**
@@ -15,7 +15,7 @@ type BoardProps = {
 	 * The winning player is passed in,
 	 * or `null` in the case of a draw.
 	 */
-	onGameOver: (winner: XorO | null) => void;
+	onGameOver: (winner: GameResult) => void;
 }
 
 export const Board: FC<BoardProps> = ({
@@ -23,27 +23,20 @@ export const Board: FC<BoardProps> = ({
 	firstPlayer,
 	onGameOver,
 }) => {
-	const [board, setBoard] = useState<BoardState>(
-		// Don't need to create a new array every single render
-		() => new Array(boardSize * boardSize).fill(undefined)
-	);
-	const nextPlayer = getNextPlayer(board, firstPlayer);
-
-	const winningLines = useMemo(
-		() => getWinningLines(boardSize),
-		[boardSize]
-	);
-
-	const winner = getWinner(board, winningLines);
-	const gameover = !!winner || isBoardFilled(board);
+	const {
+		board,
+		setCell,
+		nextPlayer,
+		gameResult,
+	} = useTicTacToe(boardSize, firstPlayer);
 
 	useEffect(
 		() => {
-			if(gameover) {
-				onGameOver(winner)
+			if(gameResult) {
+				onGameOver(gameResult)
 			}
 		},
-		[gameover]
+		[gameResult]
 	);
 
 	return (
@@ -55,14 +48,8 @@ export const Board: FC<BoardProps> = ({
 				{board.map((cell, index) => (
 					<div
 						onClick={() => {
-							if(gameover) return;
-							setBoard(
-								(prevBoard) => {
-									const newBoard = [...prevBoard];
-									newBoard[index] = nextPlayer;
-									return newBoard;
-								}
-							)
+							if(cell !== undefined || gameResult) return;
+							setCell(index, nextPlayer)
 						}}
 						key={index}
 						className="border-2 border-gray-900 w-10 h-10 cursor-pointer flex items-center justify-center text-2xl font-bold"

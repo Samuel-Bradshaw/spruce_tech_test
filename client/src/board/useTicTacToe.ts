@@ -1,4 +1,5 @@
-import { BoardState, XorO } from "../types";
+import { useMemo, useState } from "react";
+import { BoardState, DRAW, GameResult, XorO } from "./types";
 
 /**
  * For the given board state, get the number of turns that have happened.
@@ -93,3 +94,47 @@ export const getWinner = (board: BoardState, winningLines: WinningLine[]): XorO 
  */
 export const isBoardFilled = (board: BoardState): boolean =>
 	board.every((cell) => cell !== undefined);
+
+/**
+ * Hook for querying Tic Tac Toe game state
+ * and making moves.
+ */
+export const useTicTacToe = (boardSize: number, firstPlayer: XorO) => {
+	const [board, setBoard] = useState<BoardState>(
+		() => new Array(boardSize * boardSize).fill(undefined)
+	);
+	
+	const winningLines = useMemo(
+		() => getWinningLines(boardSize),
+		[boardSize]
+	);
+
+	const nextPlayer = getNextPlayer(board, firstPlayer);
+	const winner = getWinner(board, winningLines);
+	
+	/**
+	 * Result of the game, or `null` if the game has not yet ended.
+	 * GameResult will be truthy including in the case of a draw.
+	 */
+	const gameResult: GameResult | null = winner || (
+		isBoardFilled(board) ? DRAW : null
+	)
+	
+	const setCell = (cellIndex: number, player: XorO) => {
+		setBoard(
+			(prevBoard) => {
+				const newBoard = [...prevBoard];
+				newBoard[cellIndex] = player;
+				return newBoard;
+			}
+		)
+	}
+
+	return {
+		board,
+		setCell,
+		nextPlayer,
+		gameResult,
+	} as const;
+	
+}
