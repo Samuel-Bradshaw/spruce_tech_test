@@ -1,0 +1,19 @@
+{
+	"name": "spruce-tech-test",
+	"private": true,
+	"version": "1.0.0",
+	"workspaces": [
+		"client"
+	],
+	"scripts": {
+		"start": "npm run start -w client",
+		"build": "npm run build -w client",
+		"test": "npm run test -w client",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write ."
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4"
+	}
+}

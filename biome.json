@@ -24,5 +24,8 @@
 			"quoteStyle": "double",
 			"jsxQuoteStyle": "double"
 		}
+	},
+	"files": {
+		"include": ["./client/src"]
 	}
 }
