@@ -1,39 +1,61 @@
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { BoardState, XorO } from "../types";
 import { getNextPlayer, getWinner, getWinningLines, isBoardFilled } from "./utils";
 
-/** 3x3 board size */
-const BOARD_SIZE = 3;
-const FIRST_PLAYER: XorO = "X";
+type BoardProps = {
+	/**
+	 * A number between 3 and 15.
+	 */
+	boardSize: number;
 
-export const Board: FC = () => {
+	firstPlayer: XorO;
+
+	/**
+	 * To be called when the game is over.
+	 * The winning player is passed in,
+	 * or `null` in the case of a draw.
+	 */
+	onGameOver: (winner: XorO | null) => void;
+}
+
+export const Board: FC<BoardProps> = ({
+	boardSize,
+	firstPlayer,
+	onGameOver,
+}) => {
 	const [board, setBoard] = useState<BoardState>(
 		// Don't need to create a new array every single render
-		() => new Array(BOARD_SIZE * BOARD_SIZE).fill(undefined)
+		() => new Array(boardSize * boardSize).fill(undefined)
 	);
-	const nextPlayer = getNextPlayer(board, FIRST_PLAYER);
+	const nextPlayer = getNextPlayer(board, firstPlayer);
 
 	const winningLines = useMemo(
-		() => getWinningLines(BOARD_SIZE),
-		[BOARD_SIZE]
+		() => getWinningLines(boardSize),
+		[boardSize]
 	);
 
 	const winner = getWinner(board, winningLines);
-	const boardFilled = isBoardFilled(board);
-	const draw = !winner && boardFilled;
+	const gameover = !!winner || isBoardFilled(board);
 
-	const disabled = winner || boardFilled;
+	useEffect(
+		() => {
+			if(gameover) {
+				onGameOver(winner)
+			}
+		},
+		[gameover]
+	);
 
 	return (
 		<div>
 			<div
 				className="grid gap-1"
-				style={{ gridTemplateColumns: `repeat(${BOARD_SIZE}, 1fr)` }}
+				style={{ gridTemplateColumns: `repeat(${boardSize}, 1fr)` }}
 			>
 				{board.map((cell, index) => (
 					<div
 						onClick={() => {
-							if(disabled) return;
+							if(gameover) return;
 							setBoard(
 								(prevBoard) => {
 									const newBoard = [...prevBoard];
@@ -49,8 +71,6 @@ export const Board: FC = () => {
 					</div>
 				))}
 			</div>
-			{winner && ( <b>WINNER: {winner}</b> )}
-			{draw && <b>DRAW!</b>}
 		</div>
 	);
 

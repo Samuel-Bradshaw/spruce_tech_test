@@ -69,6 +69,10 @@ export const getWinningLines = (boardSize: number): WinningLine[] => {
 	return lines;
 };
 
+/**
+ * Based on the current board state and the available winning lines,
+ * gets the game winner, if any.
+ */
 export const getWinner = (board: BoardState, winningLines: WinningLine[]): XorO | null => {
 	for(const winningLine of winningLines) {
 		const player = board[winningLine[0]];
@@ -84,5 +88,8 @@ export const getWinner = (board: BoardState, winningLines: WinningLine[]): XorO 
 	return null;
 }
 
+/**
+ * Whether or not every position on the board has been filled.
+ */
 export const isBoardFilled = (board: BoardState): boolean =>
 	board.every((cell) => cell !== undefined);
