@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react'
-import { Board } from './game/Board'
+import { Board } from './components/game/Board'
+import { NewGameButton } from './components/game/NewGameButton'
 import { v4 as uuid } from "uuid"
 
 export const Main: FC = () => {
@@ -7,12 +8,7 @@ export const Main: FC = () => {
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col items-center pt-16">
 			<h1 className="text-3xl font-bold text-gray-800 mb-8">Tic Tac Toe</h1>
-			<button
-				onClick={() => setGameId(uuid())}
-				className="mb-6 px-4 py-2 bg-gray-800 text-white font-medium rounded hover:bg-gray-700 transition-colors"
-			>
-				New Game
-			</button>
+			<NewGameButton onReset={() => setGameId(uuid())} />
 			<Board
 				/**
 				 * Changing the key will render an entirely fresh instance of Board.
