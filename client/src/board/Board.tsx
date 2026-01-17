@@ -1,9 +1,9 @@
-import React, { FC, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { BoardState, XorO } from "../types";
-import { getNextPlayer } from "./utils";
+import { getNextPlayer, getWinner, getWinningLines, isBoardFilled } from "./utils";
 
 /** 3x3 board size */
-const BOARD_SIZE = 5;
+const BOARD_SIZE = 3;
 const FIRST_PLAYER: XorO = "X";
 
 export const Board: FC = () => {
@@ -13,26 +13,44 @@ export const Board: FC = () => {
 	);
 	const nextPlayer = getNextPlayer(board, FIRST_PLAYER);
 
+	const winningLines = useMemo(
+		() => getWinningLines(BOARD_SIZE),
+		[BOARD_SIZE]
+	);
+
+	const winner = getWinner(board, winningLines);
+	const boardFilled = isBoardFilled(board);
+	const draw = !winner && boardFilled;
+
+	const disabled = winner || boardFilled;
+
 	return (
-		<div
-			className="grid gap-1"
-			style={{ gridTemplateColumns: `repeat(${BOARD_SIZE}, 1fr)` }}
-		>
-			{board.map((cell, index) => (
-				<div
-					onClick={() => setBoard(
-						(prevBoard) => {
-							const newBoard = [...prevBoard];
-							newBoard[index] = nextPlayer;
-							return newBoard;
-						}
-					)}
-					key={index}
-					className="border-2 border-gray-900 w-10 h-10 cursor-pointer flex items-center justify-center text-2xl font-bold"
-				>
-					{cell}
-				</div>
-			))}
+		<div>
+			<div
+				className="grid gap-1"
+				style={{ gridTemplateColumns: `repeat(${BOARD_SIZE}, 1fr)` }}
+			>
+				{board.map((cell, index) => (
+					<div
+						onClick={() => {
+							if(disabled) return;
+							setBoard(
+								(prevBoard) => {
+									const newBoard = [...prevBoard];
+									newBoard[index] = nextPlayer;
+									return newBoard;
+								}
+							)
+						}}
+						key={index}
+						className="border-2 border-gray-900 w-10 h-10 cursor-pointer flex items-center justify-center text-2xl font-bold"
+					>
+						{cell}
+					</div>
+				))}
+			</div>
+			{winner && ( <b>WINNER: {winner}</b> )}
+			{draw && <b>DRAW!</b>}
 		</div>
 	);
 
