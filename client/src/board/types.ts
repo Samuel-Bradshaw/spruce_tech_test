@@ -4,6 +4,8 @@ export type XorO = 'X' | 'O';
  */
 export type BoardState = readonly (XorO | undefined)[];
 
+// Could really get into the semantics of what a "type" is here.
+// Feels like overkill to create a separate file JUST for this though.
 /**
  * Draw is a special case,
  * means we can avoid using `"DRAW"`, `null`, `undefined` etc.

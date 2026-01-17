@@ -45,10 +45,10 @@ export const Board: FC<BoardProps> = ({
 	);
 
 	return (
-		<div>
+		<div className="flex flex-col items-center gap-6">
 			<div
-				className="grid gap-1"
-				style={{ gridTemplateColumns: `repeat(${boardSize}, 1fr)` }}
+				className="grid bg-gray-300 p-1 rounded"
+				style={{ gridTemplateColumns: `repeat(${boardSize}, 1fr)`, gap: '4px' }}
 			>
 				{board.map((cell, index) => (
 					<div
@@ -57,14 +57,14 @@ export const Board: FC<BoardProps> = ({
 							setCell(index, nextPlayer)
 						}}
 						key={index}
-						className="border-2 border-gray-900 w-10 h-10 cursor-pointer flex items-center justify-center text-2xl font-bold"
+						className="bg-white w-16 h-16 flex items-center justify-center text-3xl font-bold cursor-pointer hover:bg-gray-100 transition-colors select-none"
 					>
 						{cell}
 					</div>
 				))}
 			</div>
-			{gameResult === DRAW && <b>Draw!</b>}
-			{gameResult && gameResult !== DRAW && <b>Winner: {gameResult}</b>}
+			{gameResult === DRAW && <p className="text-lg font-semibold text-gray-600">Draw!</p>}
+			{gameResult && gameResult !== DRAW && <p className="text-lg font-semibold text-gray-800">Winner: {gameResult}</p>}
 		</div>
 	);
 
