@@ -1,26 +1,31 @@
 import React, { FC, useEffect } from "react";
-import { GameResult, XorO } from "./types";
+import { DRAW, GameResult, XorO } from "./types";
 import { useTicTacToe } from "./useTicTacToe";
 
 type BoardProps = {
 	/**
 	 * A number between 3 and 15.
+	 * @default 3
 	 */
-	boardSize: number;
+	boardSize?: number;
 
-	firstPlayer: XorO;
+	/**
+	 * Player that goes first in the game.
+	 * @default "X"
+	 */
+	firstPlayer?: XorO;
 
 	/**
 	 * To be called when the game is over.
 	 * The winning player is passed in,
 	 * or `null` in the case of a draw.
 	 */
-	onGameOver: (winner: GameResult) => void;
+	onGameOver?: (winner: GameResult) => void;
 }
 
 export const Board: FC<BoardProps> = ({
-	boardSize,
-	firstPlayer,
+	boardSize = 3,
+	firstPlayer = "X",
 	onGameOver,
 }) => {
 	const {
@@ -33,7 +38,7 @@ export const Board: FC<BoardProps> = ({
 	useEffect(
 		() => {
 			if(gameResult) {
-				onGameOver(gameResult)
+				onGameOver?.(gameResult)
 			}
 		},
 		[gameResult]
@@ -58,6 +63,8 @@ export const Board: FC<BoardProps> = ({
 					</div>
 				))}
 			</div>
+			{gameResult === DRAW && <b>Draw!</b>}
+			{gameResult && gameResult !== DRAW && <b>Winner: {gameResult}</b>}
 		</div>
 	);
 
