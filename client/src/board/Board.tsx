@@ -51,16 +51,14 @@ export const Board: FC<BoardProps> = ({
 				style={{ gridTemplateColumns: `repeat(${boardSize}, 1fr)`, gap: '4px' }}
 			>
 				{board.map((cell, index) => (
-					<div
-						onClick={() => {
-							if(cell !== undefined || gameResult) return;
-							setCell(index, nextPlayer)
-						}}
+					<button
+						onClick={() => setCell(index, nextPlayer)}
+						disabled={cell !== undefined || !!gameResult}
 						key={index}
-						className="bg-white w-16 h-16 flex items-center justify-center text-3xl font-bold cursor-pointer hover:bg-gray-100 transition-colors select-none"
+						className="bg-white w-16 h-16 flex items-center justify-center text-3xl font-bold cursor-pointer hover:bg-gray-100 transition-colors select-none disabled:cursor-default disabled:hover:bg-white"
 					>
 						{cell}
-					</div>
+					</button>
 				))}
 			</div>
 			{gameResult === DRAW && <p className="text-lg font-semibold text-gray-600">Draw!</p>}
