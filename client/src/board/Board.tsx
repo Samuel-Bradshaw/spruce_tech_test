@@ -61,6 +61,7 @@ export const Board: FC<BoardProps> = ({
 					</button>
 				))}
 			</div>
+			{!gameResult && <p className="text-lg font-semibold text-gray-600">Next player: <b>{nextPlayer}</b></p>}
 			{gameResult === DRAW && <p className="text-lg font-semibold text-gray-600">Draw!</p>}
 			{gameResult && gameResult !== DRAW && <p className="text-lg font-semibold text-gray-800">Winner: {gameResult}</p>}
 		</div>
