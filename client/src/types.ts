@@ -1,5 +1,5 @@
 export type XorO = 'X' | 'O';
 /**
- * The state of the board as a 1-D array.
+ * The state of the board as an immutable 1-D array.
  */
-export type Grid = (XorO | undefined)[];
+export type BoardState = readonly (XorO | undefined)[];
