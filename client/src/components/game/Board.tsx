@@ -92,6 +92,7 @@ export const Board: FC<BoardProps> = ({
 						disabled={cell !== undefined || disabled}
 						// biome-ignore lint/suspicious/noArrayIndexKey: Fixed length array
 						key={index}
+						data-testid={`cell-${index}`}
 						className="bg-white w-16 h-16 flex items-center justify-center text-3xl font-bold cursor-pointer hover:bg-gray-100 transition-colors select-none disabled:cursor-default disabled:hover:bg-white"
 					>
 						{cell}

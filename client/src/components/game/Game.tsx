@@ -49,15 +49,15 @@ export const Game: FC<GameProps> = ({
 				onCellClick={(index) => setCell(index, nextPlayer)}
 			/>
 			{!gameResult && (
-				<p className="text-lg font-semibold text-gray-600">
+				<p className="text-lg font-semibold text-gray-600" data-testid="game-status">
 					Next player: <b>{nextPlayer}</b>
 				</p>
 			)}
 			{gameResult === DRAW && (
-				<p className="text-lg font-semibold text-gray-600">Draw!</p>
+				<p className="text-lg font-semibold text-gray-600" data-testid="game-status">Draw!</p>
 			)}
 			{gameResult && gameResult !== DRAW && (
-				<p className="text-lg font-semibold text-gray-800">
+				<p className="text-lg font-semibold text-gray-800" data-testid="game-status">
 					Winner: {gameResult}
 				</p>
 			)}
