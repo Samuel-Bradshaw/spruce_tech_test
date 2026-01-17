@@ -77,13 +77,16 @@ export const getWinningLines = (boardSize: number): WinningLine[] => {
 export const getWinner = (
 	board: BoardState,
 	winningLines: WinningLine[],
-): XorO | null => {
+): {
+	player: XorO;
+	winningLine: WinningLine;
+} | null => {
 	for (const winningLine of winningLines) {
 		const player = board[winningLine[0]];
 		if (!player) continue;
 
 		if (winningLine.every((cellIndex) => board[cellIndex] === player)) {
-			return player;
+			return { player, winningLine };
 		}
 	}
 
@@ -115,7 +118,7 @@ export const useTicTacToe = (boardSize: number, firstPlayer: XorO) => {
 	 * GameResult will be truthy including in the case of a draw.
 	 */
 	const gameResult: GameResult | null =
-		winner || (isBoardFilled(board) ? DRAW : null);
+		winner?.player ?? (isBoardFilled(board) ? DRAW : null);
 
 	const setCell = (cellIndex: number, player: XorO) => {
 		setBoard((prevBoard) => {
@@ -130,5 +133,6 @@ export const useTicTacToe = (boardSize: number, firstPlayer: XorO) => {
 		setCell,
 		nextPlayer,
 		gameResult,
+		winningLine: winner?.winningLine,
 	} as const;
 };

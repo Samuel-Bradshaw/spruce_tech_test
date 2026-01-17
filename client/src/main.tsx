@@ -1,15 +1,18 @@
 import { type FC, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { Board } from "./components/game/Board";
+import { Game } from "./components/game/Game";
 import { NewGameButton } from "./components/game/NewGameButton";
 
 export const Main: FC = () => {
-	const [gameId, setGameId] = useState<string>(uuid());
+	const [gameId, setGameId] = useState<string>(
+		// Or could come from a DB, for example
+		() => uuid(),
+	);
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col items-center pt-16">
 			<h1 className="text-3xl font-bold text-gray-800 mb-8">Tic Tac Toe</h1>
 			<NewGameButton onReset={() => setGameId(uuid())} />
-			<Board
+			<Game
 				/**
 				 * Changing the key will render an entirely fresh instance of Board.
 				 *
