@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Board } from './board/Board'
+import { Board } from './game/Board'
 import { v4 as uuid } from "uuid"
 
 export const Main: FC = () => {
