@@ -1,11 +1,16 @@
 import { type FC, useRef } from "react";
-import { ConfirmDialog } from "../ConfirmDialog";
+import { NewGameDialog } from "./NewGameDialog";
+import type { GameSettings } from "./types";
 
 type NewGameButtonProps = {
-	onReset: () => void;
+	onReset: (gameSettings: GameSettings) => void;
+	prevSettings: GameSettings;
 };
 
-export const NewGameButton: FC<NewGameButtonProps> = ({ onReset }) => {
+export const NewGameButton: FC<NewGameButtonProps> = ({
+	onReset,
+	prevSettings,
+}) => {
 	const dialogRef = useRef<HTMLDialogElement>(null);
 
 	return (
@@ -17,11 +22,10 @@ export const NewGameButton: FC<NewGameButtonProps> = ({ onReset }) => {
 			>
 				New Game
 			</button>
-			<ConfirmDialog
+			<NewGameDialog
 				ref={dialogRef}
-				title="New Game"
-				message="Are you sure you want to start a new game?"
 				onConfirm={onReset}
+				prevSettings={prevSettings}
 			/>
 		</>
 	);

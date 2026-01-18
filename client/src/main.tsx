@@ -2,16 +2,31 @@ import { type FC, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Game } from "./components/game/Game";
 import { NewGameButton } from "./components/game/NewGameButton";
+import type { GameSettings } from "./components/game/types";
+
+type GameInfo = GameSettings & {
+	id: string;
+};
 
 export const Main: FC = () => {
-	const [gameId, setGameId] = useState<string>(
+	const [gameInfo, setGameId] = useState<GameInfo>(() => ({
 		// Or could come from a DB, for example
-		() => uuid(),
-	);
+		id: uuid(),
+		boardSize: 3,
+		firstPlayer: "X",
+	}));
+
+	const createNewGame = (gameSettings: GameSettings) => {
+		setGameId({
+			...gameSettings,
+			id: uuid(),
+		});
+	};
+
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col items-center pt-16">
 			<h1 className="text-3xl font-bold text-gray-800 mb-8">Tic Tac Toe</h1>
-			<NewGameButton onReset={() => setGameId(uuid())} />
+			<NewGameButton onReset={createNewGame} prevSettings={gameInfo} />
 			<Game
 				/**
 				 * Changing the key will render an entirely fresh instance of Board.
@@ -21,7 +36,8 @@ export const Main: FC = () => {
 				 * but if changes start getting made then there's a risk of the
 				 * reset code getting out-of-sync with any new game code.
 				 */
-				key={gameId}
+				key={gameInfo.id}
+				gameSettings={gameInfo}
 			/>
 		</div>
 	);
