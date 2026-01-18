@@ -199,27 +199,37 @@ describe("isBoardFilled", () => {
 
 describe("useTicTacToe", () => {
 	it("initializes with empty board of correct size", () => {
-		const { result } = renderHook(() => useTicTacToe(3, "X"));
+		const { result } = renderHook(() =>
+			useTicTacToe({ boardSize: 3, firstPlayer: "X" }),
+		);
 
 		expect(result.current.board).toHaveLength(9);
 		expect(result.current.board.every((cell) => cell === undefined)).toBe(true);
 	});
 
 	it("initializes with correct first player", () => {
-		const { result: resultX } = renderHook(() => useTicTacToe(3, "X"));
+		const { result: resultX } = renderHook(() =>
+			useTicTacToe({ boardSize: 3, firstPlayer: "X" }),
+		);
 		expect(resultX.current.nextPlayer).toBe("X");
 
-		const { result: resultO } = renderHook(() => useTicTacToe(3, "O"));
+		const { result: resultO } = renderHook(() =>
+			useTicTacToe({ boardSize: 3, firstPlayer: "O" }),
+		);
 		expect(resultO.current.nextPlayer).toBe("O");
 	});
 
 	it("starts with no game result", () => {
-		const { result } = renderHook(() => useTicTacToe(3, "X"));
+		const { result } = renderHook(() =>
+			useTicTacToe({ boardSize: 3, firstPlayer: "X" }),
+		);
 		expect(result.current.gameResult).toBeNull();
 	});
 
 	it("updates board when cell is set", () => {
-		const { result } = renderHook(() => useTicTacToe(3, "X"));
+		const { result } = renderHook(() =>
+			useTicTacToe({ boardSize: 3, firstPlayer: "X" }),
+		);
 
 		act(() => {
 			result.current.setCell(0, "X");
@@ -229,7 +239,9 @@ describe("useTicTacToe", () => {
 	});
 
 	it("alternates next player after each move", () => {
-		const { result } = renderHook(() => useTicTacToe(3, "X"));
+		const { result } = renderHook(() =>
+			useTicTacToe({ boardSize: 3, firstPlayer: "X" }),
+		);
 
 		expect(result.current.nextPlayer).toBe("X");
 
@@ -245,7 +257,9 @@ describe("useTicTacToe", () => {
 	});
 
 	it("detects winner and returns winning line", () => {
-		const { result } = renderHook(() => useTicTacToe(3, "X"));
+		const { result } = renderHook(() =>
+			useTicTacToe({ boardSize: 3, firstPlayer: "X" }),
+		);
 
 		// X plays: 0, 1, 2 (top row)
 		// O plays: 3, 4
@@ -270,7 +284,9 @@ describe("useTicTacToe", () => {
 	});
 
 	it("detects draw when board is filled with no winner", () => {
-		const { result } = renderHook(() => useTicTacToe(3, "X"));
+		const { result } = renderHook(() =>
+			useTicTacToe({ boardSize: 3, firstPlayer: "X" }),
+		);
 
 		// Fill board with no winner:
 		// X O X

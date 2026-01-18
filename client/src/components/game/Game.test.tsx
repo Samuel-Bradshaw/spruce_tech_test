@@ -14,7 +14,7 @@ describe("Game component integration test", () => {
 	});
 
 	it("uses specified first player", () => {
-		render(<Game firstPlayer="O" />);
+		render(<Game gameSettings={{ boardSize: 3, firstPlayer: "O" }} />);
 		expect(screen.getByTestId("game-status")).toHaveTextContent(
 			"Next player: O",
 		);
@@ -121,7 +121,7 @@ describe("Game component integration test", () => {
 	});
 
 	it("renders correct board size", () => {
-		render(<Game boardSize={4} />);
+		render(<Game gameSettings={{ boardSize: 4, firstPlayer: "X" }} />);
 		const buttons = screen.getAllByRole("button");
 		expect(buttons).toHaveLength(16);
 	});

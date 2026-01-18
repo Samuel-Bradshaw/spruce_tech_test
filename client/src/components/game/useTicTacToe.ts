@@ -1,5 +1,11 @@
 import { useMemo, useState } from "react";
-import { type BoardState, DRAW, type GameResult, type XorO } from "./types";
+import {
+	type BoardState,
+	DRAW,
+	type GameResult,
+	type GameSettings,
+	type XorO,
+} from "./types";
 
 /**
  * For the given board state, get the number of turns that have happened.
@@ -103,7 +109,7 @@ export const isBoardFilled = (board: BoardState): boolean =>
  * Hook for querying Tic Tac Toe game state
  * and making moves.
  */
-export const useTicTacToe = (boardSize: number, firstPlayer: XorO) => {
+export const useTicTacToe = ({ boardSize, firstPlayer }: GameSettings) => {
 	const [board, setBoard] = useState<BoardState>(() =>
 		new Array(boardSize * boardSize).fill(undefined),
 	);

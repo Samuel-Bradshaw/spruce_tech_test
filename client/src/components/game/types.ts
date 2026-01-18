@@ -18,3 +18,15 @@ export type Draw = typeof DRAW;
  * Can be X, O, or a draw.
  */
 export type GameResult = XorO | Draw;
+
+export type GameSettings = {
+	/**
+	 * A number between 3 and 15.
+	 */
+	boardSize: number;
+
+	/**
+	 * Player that goes first in the game.
+	 */
+	firstPlayer: XorO;
+};

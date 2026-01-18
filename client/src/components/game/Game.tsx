@@ -1,21 +1,14 @@
 import { type FC, useEffect } from "react";
 import { Board } from "./Board";
-import { DRAW, type GameResult, type XorO } from "./types";
+import { DRAW, type GameResult, type GameSettings } from "./types";
 import { useTicTacToe } from "./useTicTacToe";
 
 type GameProps = {
 	/**
-	 * A number between 3 and 15.
-	 * @default 3
+	 * Settings for the TicTacToe game.
+	 * @default { boardSize:3, firstPlayer:"X" }
 	 */
-	boardSize?: number;
-
-	/**
-	 * Player that goes first in the game.
-	 * @default "X"
-	 */
-	firstPlayer?: XorO;
-
+	gameSettings?: GameSettings;
 	/**
 	 * To be called when the game is over.
 	 * The winning player is passed in,
@@ -25,14 +18,14 @@ type GameProps = {
 };
 
 export const Game: FC<GameProps> = ({
-	boardSize = 3,
-	firstPlayer = "X",
+	gameSettings = {
+		firstPlayer: "X",
+		boardSize: 3,
+	},
 	onGameOver,
 }) => {
-	const { board, setCell, nextPlayer, gameResult, winningLine } = useTicTacToe(
-		boardSize,
-		firstPlayer,
-	);
+	const { board, setCell, nextPlayer, gameResult, winningLine } =
+		useTicTacToe(gameSettings);
 
 	useEffect(() => {
 		if (gameResult) {
@@ -49,15 +42,26 @@ export const Game: FC<GameProps> = ({
 				onCellClick={(index) => setCell(index, nextPlayer)}
 			/>
 			{!gameResult && (
-				<p className="text-lg font-semibold text-gray-600" data-testid="game-status">
+				<p
+					className="text-lg font-semibold text-gray-600"
+					data-testid="game-status"
+				>
 					Next player: <b>{nextPlayer}</b>
 				</p>
 			)}
 			{gameResult === DRAW && (
-				<p className="text-lg font-semibold text-gray-600" data-testid="game-status">Draw!</p>
+				<p
+					className="text-lg font-semibold text-gray-600"
+					data-testid="game-status"
+				>
+					Draw!
+				</p>
 			)}
 			{gameResult && gameResult !== DRAW && (
-				<p className="text-lg font-semibold text-gray-800" data-testid="game-status">
+				<p
+					className="text-lg font-semibold text-gray-800"
+					data-testid="game-status"
+				>
 					Winner: {gameResult}
 				</p>
 			)}
