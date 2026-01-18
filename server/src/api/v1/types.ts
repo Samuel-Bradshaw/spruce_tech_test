@@ -1,3 +1,8 @@
+// Largely a copy of types.ts in the client folder,
+// however I want to keep client and server code separate.
+// Possibly if there was enough shared logic there could be a "common" folder/package
+// with these typings in it.
+
 /**
  * Player type.
  */
@@ -17,20 +22,3 @@ export type Draw = typeof DRAW;
  * Can be X, O, or a draw.
  */
 export type GameResult = XorO | Draw;
-
-/**
- * The state of the board as an immutable 1-D array.
- */
-export type BoardState = readonly (XorO | undefined)[];
-
-export type GameSettings = {
-	/**
-	 * A number between 3 and 15.
-	 */
-	boardSize: number;
-
-	/**
-	 * Player that goes first in the game.
-	 */
-	firstPlayer: XorO;
-};
