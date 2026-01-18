@@ -120,9 +120,39 @@ describe("Game component integration test", () => {
 		}
 	});
 
-	it("renders correct board size", () => {
+	it("renders correct board size for 4x4", () => {
 		render(<Game gameSettings={{ boardSize: 4, firstPlayer: "X" }} />);
 		const buttons = screen.getAllByRole("button");
 		expect(buttons).toHaveLength(16);
+	});
+
+	it("renders correct board size for 5x5", () => {
+		render(<Game gameSettings={{ boardSize: 5, firstPlayer: "X" }} />);
+		const buttons = screen.getAllByRole("button");
+		expect(buttons).toHaveLength(25);
+	});
+
+	it("detects winner on 4x4 board", async () => {
+		const user = userEvent.setup();
+		const handleGameOver = jest.fn();
+		render(
+			<Game
+				gameSettings={{ boardSize: 4, firstPlayer: "X" }}
+				onGameOver={handleGameOver}
+			/>,
+		);
+
+		// X plays top row: 0, 1, 2, 3
+		// O plays second row: 4, 5, 6
+		await user.click(getCell(0));
+		await user.click(getCell(4));
+		await user.click(getCell(1));
+		await user.click(getCell(5));
+		await user.click(getCell(2));
+		await user.click(getCell(6));
+		await user.click(getCell(3));
+
+		expect(handleGameOver).toHaveBeenCalledWith("X");
+		expect(screen.getByTestId("game-status")).toHaveTextContent("Winner:");
 	});
 });

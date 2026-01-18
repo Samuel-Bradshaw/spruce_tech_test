@@ -70,10 +70,48 @@ describe("getWinningLines", () => {
 		expect(lines).toContainEqual([2, 4, 6]);
 	});
 
-	it("each line has correct length", () => {
+	it("generates correct lines for 4x4 board", () => {
+		const lines = getWinningLines(4);
+
+		// 4 rows + 4 columns + 2 diagonals = 10 lines
+		expect(lines).toHaveLength(10);
+
+		// Check first row
+		expect(lines).toContainEqual([0, 1, 2, 3]);
+		// Check last row
+		expect(lines).toContainEqual([12, 13, 14, 15]);
+		// Check first column
+		expect(lines).toContainEqual([0, 4, 8, 12]);
+		// Check diagonals
+		expect(lines).toContainEqual([0, 5, 10, 15]);
+		expect(lines).toContainEqual([3, 6, 9, 12]);
+	});
+
+	it("generates correct lines for 5x5 board", () => {
 		const lines = getWinningLines(5);
-		for (const line of lines) {
-			expect(line).toHaveLength(5);
+
+		// 5 rows + 5 columns + 2 diagonals = 12 lines
+		expect(lines).toHaveLength(12);
+
+		// Check diagonals
+		expect(lines).toContainEqual([0, 6, 12, 18, 24]);
+		expect(lines).toContainEqual([4, 8, 12, 16, 20]);
+	});
+
+	it("each line has correct length for various board sizes", () => {
+		for (const size of [3, 4, 5, 10, 15]) {
+			const lines = getWinningLines(size);
+			for (const line of lines) {
+				expect(line).toHaveLength(size);
+			}
+		}
+	});
+
+	it("generates correct number of lines for any board size", () => {
+		for (const size of [3, 4, 5, 10, 15]) {
+			const lines = getWinningLines(size);
+			// rows + columns + 2 diagonals
+			expect(lines).toHaveLength(size + size + 2);
 		}
 	});
 });
@@ -312,5 +350,82 @@ describe("useTicTacToe", () => {
 
 		expect(result.current.gameResult).toBe(DRAW);
 		expect(result.current.winningLine).toBeUndefined();
+	});
+
+	describe("with different board sizes", () => {
+		it("initializes 4x4 board with 16 cells", () => {
+			const { result } = renderHook(() =>
+				useTicTacToe({ boardSize: 4, firstPlayer: "X" }),
+			);
+
+			expect(result.current.board).toHaveLength(16);
+		});
+
+		it("initializes 5x5 board with 25 cells", () => {
+			const { result } = renderHook(() =>
+				useTicTacToe({ boardSize: 5, firstPlayer: "X" }),
+			);
+
+			expect(result.current.board).toHaveLength(25);
+		});
+
+		it("detects winner on 4x4 board", () => {
+			const { result } = renderHook(() =>
+				useTicTacToe({ boardSize: 4, firstPlayer: "X" }),
+			);
+
+			// X plays top row: 0, 1, 2, 3
+			// O plays second row: 4, 5, 6
+			act(() => result.current.setCell(0, "X"));
+			act(() => result.current.setCell(4, "O"));
+			act(() => result.current.setCell(1, "X"));
+			act(() => result.current.setCell(5, "O"));
+			act(() => result.current.setCell(2, "X"));
+			act(() => result.current.setCell(6, "O"));
+			act(() => result.current.setCell(3, "X"));
+
+			expect(result.current.gameResult).toBe("X");
+			expect(result.current.winningLine).toEqual([0, 1, 2, 3]);
+		});
+
+		it("detects diagonal winner on 4x4 board", () => {
+			const { result } = renderHook(() =>
+				useTicTacToe({ boardSize: 4, firstPlayer: "X" }),
+			);
+
+			// X plays diagonal: 0, 5, 10, 15
+			// O plays: 1, 2, 3
+			act(() => result.current.setCell(0, "X"));
+			act(() => result.current.setCell(1, "O"));
+			act(() => result.current.setCell(5, "X"));
+			act(() => result.current.setCell(2, "O"));
+			act(() => result.current.setCell(10, "X"));
+			act(() => result.current.setCell(3, "O"));
+			act(() => result.current.setCell(15, "X"));
+
+			expect(result.current.gameResult).toBe("X");
+			expect(result.current.winningLine).toEqual([0, 5, 10, 15]);
+		});
+
+		it("detects column winner on 5x5 board", () => {
+			const { result } = renderHook(() =>
+				useTicTacToe({ boardSize: 5, firstPlayer: "X" }),
+			);
+
+			// X plays first column: 0, 5, 10, 15, 20
+			// O plays second column: 1, 6, 11, 16
+			act(() => result.current.setCell(0, "X"));
+			act(() => result.current.setCell(1, "O"));
+			act(() => result.current.setCell(5, "X"));
+			act(() => result.current.setCell(6, "O"));
+			act(() => result.current.setCell(10, "X"));
+			act(() => result.current.setCell(11, "O"));
+			act(() => result.current.setCell(15, "X"));
+			act(() => result.current.setCell(16, "O"));
+			act(() => result.current.setCell(20, "X"));
+
+			expect(result.current.gameResult).toBe("X");
+			expect(result.current.winningLine).toEqual([0, 5, 10, 15, 20]);
+		});
 	});
 });
