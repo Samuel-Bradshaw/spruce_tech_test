@@ -1,4 +1,4 @@
-// Largely a copy of types.ts in the client folder,
+// Duplicated XorO from types.ts in the client folder,
 // however I want to keep client and server code separate.
 // Possibly if there was enough shared logic there could be a "common" folder/package
 // with these typings in it.
@@ -8,17 +8,16 @@
  */
 export type XorO = "X" | "O";
 
-// Could really get into the semantics of what a "type" is here.
-// Feels like overkill to create a separate file JUST for this though.
 /**
- * Draw is a special case,
- * means we can avoid using `"DRAW"`, `null`, `undefined` etc.
+ * Game data as returned by the API.
  */
-export const DRAW = Symbol.for("DRAW");
-export type Draw = typeof DRAW;
-
-/**
- * The result of a game.
- * Can be X, O, or a draw.
- */
-export type GameResult = XorO | Draw;
+export type GameData = {
+	id: string;
+	boardSize: number;
+	firstPlayer: XorO;
+	winner: XorO | null;
+	isDraw: boolean | null;
+	userXId: string;
+	userOId: string;
+	createdAt: number;
+};
