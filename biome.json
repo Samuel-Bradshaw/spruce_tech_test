@@ -27,6 +27,6 @@
 		}
 	},
 	"files": {
-		"includes": ["*.json", "client/src/**"]
+		"includes": ["*.json", "client/src/**", "server/src/**"]
 	}
 }
