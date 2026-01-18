@@ -26,7 +26,7 @@ export const Main: FC = () => {
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col items-center pt-16">
 			<h1 className="text-3xl font-bold text-gray-800 mb-8">Tic Tac Toe</h1>
-			<NewGameButton onReset={createNewGame} prevSettings={gameInfo} />
+			<NewGameButton onNewGame={createNewGame} prevSettings={gameInfo} />
 			<Game
 				/**
 				 * Changing the key will render an entirely fresh instance of Board.

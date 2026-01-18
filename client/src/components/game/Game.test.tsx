@@ -107,14 +107,12 @@ describe("Game component integration test", () => {
 		const user = userEvent.setup();
 		render(<Game />);
 
-		// X wins with top row
-		await user.click(getCell(0)); // X
-		await user.click(getCell(3)); // O
-		await user.click(getCell(1)); // X
-		await user.click(getCell(4)); // O
-		await user.click(getCell(2)); // X wins
+		await user.click(getCell(0));
+		await user.click(getCell(3));
+		await user.click(getCell(1));
+		await user.click(getCell(4));
+		await user.click(getCell(2));
 
-		// All cells should be disabled
 		for (let i = 0; i < 9; i++) {
 			expect(getCell(i)).toBeDisabled();
 		}
@@ -142,8 +140,6 @@ describe("Game component integration test", () => {
 			/>,
 		);
 
-		// X plays top row: 0, 1, 2, 3
-		// O plays second row: 4, 5, 6
 		await user.click(getCell(0));
 		await user.click(getCell(4));
 		await user.click(getCell(1));

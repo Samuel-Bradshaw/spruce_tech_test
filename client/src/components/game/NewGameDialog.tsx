@@ -1,13 +1,14 @@
 import { forwardRef, useState } from "react";
 import type { GameSettings, XorO } from "./types";
 
-type ConfirmDialogProps = {
+type NewGameDialogProps = {
 	onConfirm: (gameSettings: GameSettings) => void;
+	onCancel: () => void;
 	prevSettings: GameSettings;
 };
 
-export const NewGameDialog = forwardRef<HTMLDialogElement, ConfirmDialogProps>(
-	({ onConfirm, prevSettings }, ref) => {
+export const NewGameDialog = forwardRef<HTMLDialogElement, NewGameDialogProps>(
+	({ onConfirm, onCancel, prevSettings }, ref) => {
 		const [firstPlayer, setFirstPlayer] = useState<XorO>(
 			prevSettings.firstPlayer,
 		);
@@ -24,7 +25,12 @@ export const NewGameDialog = forwardRef<HTMLDialogElement, ConfirmDialogProps>(
 				ref={ref}
 				className="p-6 rounded-lg shadow-xl backdrop:bg-black/50"
 			>
-				<form method="dialog">
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						handleConfirm();
+					}}
+				>
 					<h2 className="text-lg font-bold text-gray-800 mb-4">New Game</h2>
 
 					<fieldset className="mb-4">
@@ -81,14 +87,18 @@ export const NewGameDialog = forwardRef<HTMLDialogElement, ConfirmDialogProps>(
 
 					<div className="flex gap-3 justify-end">
 						<button
-							type="submit"
+							type="button"
+							onClick={(e) => {
+								// JSDom can't handle default "submit" in unit tests
+								e.preventDefault();
+								onCancel();
+							}}
 							className="px-4 py-2 text-gray-600 font-medium rounded hover:bg-gray-100 transition-colors"
 						>
 							Cancel
 						</button>
 						<button
 							type="submit"
-							onClick={handleConfirm}
 							className="px-4 py-2 bg-gray-800 text-white font-medium rounded hover:bg-gray-700 transition-colors"
 						>
 							Start Game

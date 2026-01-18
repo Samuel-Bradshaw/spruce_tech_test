@@ -3,15 +3,24 @@ import { NewGameDialog } from "./NewGameDialog";
 import type { GameSettings } from "./types";
 
 type NewGameButtonProps = {
-	onReset: (gameSettings: GameSettings) => void;
+	onNewGame: (gameSettings: GameSettings) => void;
 	prevSettings: GameSettings;
 };
 
 export const NewGameButton: FC<NewGameButtonProps> = ({
-	onReset,
+	onNewGame,
 	prevSettings,
 }) => {
 	const dialogRef = useRef<HTMLDialogElement>(null);
+
+	const closeDialog = () => {
+		dialogRef.current?.close();
+	};
+
+	const handleConfirm = (settings: GameSettings) => {
+		closeDialog();
+		onNewGame(settings);
+	};
 
 	return (
 		<>
@@ -24,7 +33,8 @@ export const NewGameButton: FC<NewGameButtonProps> = ({
 			</button>
 			<NewGameDialog
 				ref={dialogRef}
-				onConfirm={onReset}
+				onConfirm={handleConfirm}
+				onCancel={closeDialog}
 				prevSettings={prevSettings}
 			/>
 		</>
