@@ -1,9 +1,8 @@
 import { Hono } from "hono";
+import v1Routes from "./api/v1";
 
 const app = new Hono();
 
-app.get("/api/games", (c) => {
-	return c.json({ games: [] });
-});
+app.route("/api/v1", v1Routes);
 
 export { app };
