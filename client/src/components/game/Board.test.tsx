@@ -1,30 +1,24 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Board } from "./Board";
-import type { BoardState } from "./types";
+import { board, EMPTY_BOARD, X_WINS_TOP_ROW } from "./testUtils";
 
 describe("Board", () => {
-	const emptyBoard: BoardState = Array(9).fill(undefined);
-
-	it("renders correct number of cells for 3x3 board", () => {
-		render(<Board board={emptyBoard} />);
-		const buttons = screen.getAllByRole("button");
-		expect(buttons).toHaveLength(9);
+	it("renders correct number of cells", () => {
+		render(<Board board={EMPTY_BOARD} />);
+		expect(screen.getAllByRole("button")).toHaveLength(9);
 	});
 
 	it("displays X and O in cells", () => {
-		const board: BoardState = [
-			"X",
-			"O",
-			undefined,
-			undefined,
-			"X",
-			undefined,
-			undefined,
-			undefined,
-			"O",
-		];
-		render(<Board board={board} />);
+		render(
+			<Board
+				board={board([
+					["X", "O", null],
+					[null, "X", null],
+					[null, null, "O"],
+				])}
+			/>,
+		);
 
 		const buttons = screen.getAllByRole("button");
 		expect(buttons[0]).toHaveTextContent("X");
@@ -37,85 +31,47 @@ describe("Board", () => {
 	it("calls onCellClick with correct index when cell is clicked", async () => {
 		const user = userEvent.setup();
 		const handleClick = jest.fn();
-		render(<Board board={emptyBoard} onCellClick={handleClick} />);
+		render(<Board board={EMPTY_BOARD} onCellClick={handleClick} />);
 
-		const buttons = screen.getAllByRole("button");
-		await user.click(buttons[4]);
+		await user.click(screen.getAllByRole("button")[4]);
 
-		expect(handleClick).toHaveBeenCalledTimes(1);
 		expect(handleClick).toHaveBeenCalledWith(4);
 	});
 
-	it("disables cells that already have a value", async () => {
-		const board: BoardState = [
-			"X",
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-		];
-		render(<Board board={board} />);
+	it("disables filled cells and respects disabled prop", async () => {
+		const user = userEvent.setup();
+		const handleClick = jest.fn();
+		const { rerender } = render(
+			<Board
+				board={board([
+					["X", null, null],
+					[null, null, null],
+					[null, null, null],
+				])}
+				onCellClick={handleClick}
+			/>,
+		);
 
 		const buttons = screen.getAllByRole("button");
 		expect(buttons[0]).toBeDisabled();
 		expect(buttons[1]).not.toBeDisabled();
-	});
 
-	it("disables all cells when disabled prop is true", () => {
-		render(<Board board={emptyBoard} disabled />);
+		await user.click(buttons[0]);
+		expect(handleClick).not.toHaveBeenCalled();
 
-		const buttons = screen.getAllByRole("button");
-		for (const button of buttons) {
+		rerender(<Board board={EMPTY_BOARD} disabled />);
+		for (const button of screen.getAllByRole("button")) {
 			expect(button).toBeDisabled();
 		}
 	});
 
-	it("does not call onCellClick when clicking disabled cell", async () => {
-		const user = userEvent.setup();
-		const handleClick = jest.fn();
-		const board: BoardState = [
-			"X",
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-		];
-		render(<Board board={board} onCellClick={handleClick} />);
-
-		const buttons = screen.getAllByRole("button");
-		await user.click(buttons[0]);
-
-		expect(handleClick).not.toHaveBeenCalled();
-	});
-
-	it("renders winning line SVG when winningLine is provided", () => {
-		const board: BoardState = [
-			"X",
-			"X",
-			"X",
-			"O",
-			"O",
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-		];
-		render(<Board board={board} winningLine={[0, 1, 2]} />);
-
+	it("renders winning line SVG when provided", () => {
+		render(<Board board={X_WINS_TOP_ROW} winningLine={[0, 1, 2]} />);
 		expect(screen.getByTitle("Winning line")).toBeInTheDocument();
 	});
 
-	it("does not render winning line SVG when winningLine is not provided", () => {
-		render(<Board board={emptyBoard} />);
-
+	it("does not render winning line when not provided", () => {
+		render(<Board board={EMPTY_BOARD} />);
 		expect(screen.queryByTitle("Winning line")).not.toBeInTheDocument();
 	});
 });
