@@ -5,7 +5,7 @@ import type { GameSettings, XorO } from "../types";
 import { PlayerSelect } from "./PlayerSelect";
 
 type NewGameDialogProps = {
-	onConfirm: (gameSettings: GameSettings) => void;
+	onConfirm: (gameSettings: Omit<GameSettings, "id">) => void;
 	onCancel: () => void;
 	prevSettings: GameSettings;
 	players: Player[];

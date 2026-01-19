@@ -1,24 +1,18 @@
 import { type FC, useCallback, useState } from "react";
 import { v4 as uuid } from "uuid";
+import { useSaveGameResult } from "./api/useSaveGameResult";
 import { Game } from "./components/game/Game";
 import { NewGameButton } from "./components/game/new-game/NewGameButton";
-import {
-	DRAW,
-	type GameResult,
-	type GameSettings,
-} from "./components/game/types";
+import type { GameResult, GameSettings } from "./components/game/types";
 import { PlayerManager } from "./components/players/PlayerManager";
 import {
 	ANONYMOUS_NAME,
 	usePlayerStorage,
 } from "./components/players/usePlayerStorage";
 
-type GameInfo = GameSettings & {
-	id: string;
-};
-
 export const Main: FC = () => {
 	const { players, addPlayer, removePlayer } = usePlayerStorage();
+	const { mutate: saveGameResult, isPending, error } = useSaveGameResult();
 
 	const getDefaultPlayers = useCallback(() => {
 		const anonymousPlayer = players.find((p) => p.name === ANONYMOUS_NAME);
@@ -30,7 +24,7 @@ export const Main: FC = () => {
 		} as const;
 	}, [players]);
 
-	const [gameInfo, setGameId] = useState<GameInfo>(() => {
+	const [gameSettings, setGameSettings] = useState<GameSettings>(() => {
 		const { xPlayer, oPlayer } = getDefaultPlayers();
 		return {
 			// Or could come from a DB, for example
@@ -43,19 +37,17 @@ export const Main: FC = () => {
 	});
 
 	const createNewGame = (gameSettings: GameSettings) => {
-		setGameId({
+		setGameSettings({
 			...gameSettings,
 			id: uuid(),
 		});
 	};
 
-	const activePlayerIds = [gameInfo.xPlayer.id, gameInfo.oPlayer.id];
+	const activePlayerIds = [gameSettings.xPlayer.id, gameSettings.oPlayer.id];
 
 	const handleRemovePlayer = (id: string) => {
 		removePlayer(id);
-		// If the deleted player is in the current game, reset with new defaults
 		if (activePlayerIds.includes(id)) {
-			// Need to compute defaults after removal - filter out the deleted player
 			const remainingPlayers = players.filter((p) => p.id !== id);
 			const anonymousPlayer = remainingPlayers.find(
 				(p) => p.name === ANONYMOUS_NAME,
@@ -63,11 +55,10 @@ export const Main: FC = () => {
 			const otherPlayers = remainingPlayers.filter(
 				(p) => p.name !== ANONYMOUS_NAME,
 			);
-			// Anonymous player always exists, but fallback to first remaining player for type safety
 			const fallback = anonymousPlayer ?? remainingPlayers[0];
-			setGameId({
+			setGameSettings({
 				id: uuid(),
-				boardSize: gameInfo.boardSize,
+				boardSize: gameSettings.boardSize,
 				firstPlayer: "X",
 				xPlayer: otherPlayers[0] ?? fallback,
 				oPlayer: otherPlayers[1] ?? fallback,
@@ -75,17 +66,30 @@ export const Main: FC = () => {
 		}
 	};
 
-	const onGameover = (result: GameResult) => {
-		const winningUser = result === DRAW ? "DRAW" : result;
-		console.log("WINNER: ", winningUser);
-	};
+	const onGameover = useCallback(
+		(result: GameResult) => {
+			saveGameResult({
+				...gameSettings,
+				result,
+			});
+		},
+		[gameSettings, saveGameResult],
+	);
 
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col items-center pt-16">
 			<h1 className="text-3xl font-bold text-gray-800 mb-8">Tic Tac Toe</h1>
+			{isPending && <b>SAVING GAME</b>}
+			{error && (
+				<b>
+					ERROR:
+					<br />
+					<pre>{error.toString()}</pre>
+				</b>
+			)}
 			<NewGameButton
 				onNewGame={createNewGame}
-				prevSettings={gameInfo}
+				prevSettings={gameSettings}
 				players={players}
 			/>
 			<div className="relative w-full flex justify-center">
@@ -98,8 +102,8 @@ export const Main: FC = () => {
 					 * but if changes start getting made then there's a risk of the
 					 * reset code getting out-of-sync with any new game code.
 					 */
-					key={gameInfo.id}
-					gameSettings={gameInfo}
+					key={gameSettings.id}
+					gameSettings={gameSettings}
 					onGameOver={onGameover}
 				/>
 				<div className="absolute left-4 top-0 w-80">

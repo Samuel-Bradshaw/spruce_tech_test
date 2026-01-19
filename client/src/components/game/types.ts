@@ -26,6 +26,8 @@ export type GameResult = XorO | Draw;
 export type BoardState = readonly (XorO | undefined)[];
 
 export type GameSettings = {
+	id: string;
+
 	/**
 	 * A number between 3 and 15.
 	 */
