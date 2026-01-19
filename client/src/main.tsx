@@ -1,4 +1,4 @@
-import { type FC, useState } from "react";
+import { type FC, useCallback, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Game } from "./components/game/Game";
 import { NewGameButton } from "./components/game/new-game/NewGameButton";
@@ -20,17 +20,25 @@ type GameInfo = GameSettings & {
 export const Main: FC = () => {
 	const { players, addPlayer, removePlayer } = usePlayerStorage();
 
-	const [gameInfo, setGameId] = useState<GameInfo>(() => {
+	const getDefaultPlayers = useCallback(() => {
 		const anonymousPlayer = players.find((p) => p.name === ANONYMOUS_NAME);
 		const otherPlayers = players.filter((p) => p.name !== ANONYMOUS_NAME);
-		console.log(otherPlayers);
+
+		return {
+			xPlayer: otherPlayers[0] ?? anonymousPlayer,
+			oPlayer: otherPlayers[1] ?? anonymousPlayer,
+		} as const;
+	}, [players]);
+
+	const [gameInfo, setGameId] = useState<GameInfo>(() => {
+		const { xPlayer, oPlayer } = getDefaultPlayers();
 		return {
 			// Or could come from a DB, for example
 			id: uuid(),
 			boardSize: 3,
 			firstPlayer: "X",
-			xPlayer: otherPlayers[0] ?? anonymousPlayer,
-			oPlayer: otherPlayers[1] ?? anonymousPlayer,
+			xPlayer,
+			oPlayer,
 		};
 	});
 
@@ -39,6 +47,32 @@ export const Main: FC = () => {
 			...gameSettings,
 			id: uuid(),
 		});
+	};
+
+	const activePlayerIds = [gameInfo.xPlayer.id, gameInfo.oPlayer.id];
+
+	const handleRemovePlayer = (id: string) => {
+		removePlayer(id);
+		// If the deleted player is in the current game, reset with new defaults
+		if (activePlayerIds.includes(id)) {
+			// Need to compute defaults after removal - filter out the deleted player
+			const remainingPlayers = players.filter((p) => p.id !== id);
+			const anonymousPlayer = remainingPlayers.find(
+				(p) => p.name === ANONYMOUS_NAME,
+			);
+			const otherPlayers = remainingPlayers.filter(
+				(p) => p.name !== ANONYMOUS_NAME,
+			);
+			// Anonymous player always exists, but fallback to first remaining player for type safety
+			const fallback = anonymousPlayer ?? remainingPlayers[0];
+			setGameId({
+				id: uuid(),
+				boardSize: gameInfo.boardSize,
+				firstPlayer: "X",
+				xPlayer: otherPlayers[0] ?? fallback,
+				oPlayer: otherPlayers[1] ?? fallback,
+			});
+		}
 	};
 
 	const onGameover = (result: GameResult) => {
@@ -71,8 +105,9 @@ export const Main: FC = () => {
 				<div className="absolute left-4 top-0 w-80">
 					<PlayerManager
 						players={players}
+						activePlayerIds={activePlayerIds}
 						onAddPlayer={addPlayer}
-						onRemovePlayer={removePlayer}
+						onRemovePlayer={handleRemovePlayer}
 					/>
 				</div>
 			</div>

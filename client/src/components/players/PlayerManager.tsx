@@ -5,12 +5,14 @@ import { ANONYMOUS_NAME } from "./usePlayerStorage";
 
 type PlayerManagerProps = {
 	players: Player[];
+	activePlayerIds: string[];
 	onAddPlayer: (name: string) => void;
 	onRemovePlayer: (id: string) => void;
 };
 
 export const PlayerManager: FC<PlayerManagerProps> = ({
 	players,
+	activePlayerIds,
 	onAddPlayer,
 	onRemovePlayer,
 }) => {
@@ -93,6 +95,9 @@ export const PlayerManager: FC<PlayerManagerProps> = ({
 			<ConfirmDeleteDialog
 				ref={dialogRef}
 				playerName={playerToDelete?.name ?? ""}
+				isActivePlayer={
+					playerToDelete ? activePlayerIds.includes(playerToDelete.id) : false
+				}
 				onConfirm={handleConfirmDelete}
 				onCancel={closeDeleteDialog}
 			/>
