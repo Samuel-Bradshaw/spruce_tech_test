@@ -4,6 +4,7 @@ import { useSaveGameResult } from "./api/useSaveGameResult";
 import { Game } from "./components/game/Game";
 import { NewGameButton } from "./components/game/new-game/NewGameButton";
 import type { GameResult, GameSettings } from "./components/game/types";
+import { PendingOverlay } from "./components/PendingOverlay";
 import { PlayerManager } from "./components/players/PlayerManager";
 import {
 	ANONYMOUS_NAME,
@@ -12,7 +13,12 @@ import {
 
 export const Main: FC = () => {
 	const { players, addPlayer, removePlayer } = usePlayerStorage();
-	const { mutate: saveGameResult, isPending, error } = useSaveGameResult();
+	const {
+		mutate: saveGameResult,
+		isPending,
+		error,
+		reset: resetSaveError,
+	} = useSaveGameResult();
 
 	const getDefaultPlayers = useCallback(() => {
 		const anonymousPlayer = players.find((p) => p.name === ANONYMOUS_NAME);
@@ -79,14 +85,11 @@ export const Main: FC = () => {
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col items-center pt-16">
 			<h1 className="text-3xl font-bold text-gray-800 mb-8">Tic Tac Toe</h1>
-			{isPending && <b>SAVING GAME</b>}
-			{error && (
-				<b>
-					ERROR:
-					<br />
-					<pre>{error.toString()}</pre>
-				</b>
-			)}
+			<PendingOverlay
+				isPending={isPending}
+				error={error}
+				onDismissError={resetSaveError}
+			/>
 			<NewGameButton
 				onNewGame={createNewGame}
 				prevSettings={gameSettings}
