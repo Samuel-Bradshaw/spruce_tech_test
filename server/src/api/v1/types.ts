@@ -17,7 +17,7 @@ export type GameData = {
 	firstPlayer: XorO;
 	winner: XorO | null;
 	isDraw: boolean | null;
-	userXId: string;
-	userOId: string;
+	userXId: string | null;
+	userOId: string | null;
 	createdAt: number;
 };

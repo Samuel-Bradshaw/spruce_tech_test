@@ -58,9 +58,6 @@ gameRoute.post("/", async (c) => {
 		.prepare("SELECT * FROM game WHERE id = ?")
 		.get(body.id) as GameRow;
 
-	// For testing UI when saving is pending
-	await new Promise((res) => setTimeout(res, 2_000));
-
 	return c.json<CreateGameResponse>(toGameData(game), 201);
 });
 

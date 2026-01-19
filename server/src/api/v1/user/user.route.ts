@@ -4,6 +4,7 @@ import type { GameRow } from "../game/game.model";
 import type {
 	CreateUserRequest,
 	CreateUserResponse,
+	DeleteUserResponse,
 	GetAllUsersResponse,
 	GetUserGamesResponse,
 	GetUserResponse,
@@ -120,6 +121,22 @@ userRoute.get("/:id/stats", (c) => {
 		losses: lossesAsX.count + lossesAsO.count,
 		draws: draws.count,
 	};
+	return c.json(response);
+});
+
+userRoute.delete("/:id", async (c) => {
+	const db = getDb();
+	const id = c.req.param("id");
+
+	const user = db.prepare("SELECT * FROM user WHERE id = ?").get(id);
+	if (!user) {
+		return c.json({ error: "User not found" }, 404);
+	}
+
+	db.prepare("DELETE FROM user WHERE id = ?").run(id);
+
+	const response: DeleteUserResponse = { success: true };
+
 	return c.json(response);
 });
 

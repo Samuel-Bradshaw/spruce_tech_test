@@ -26,6 +26,18 @@ export const userApi = {
 			throw error;
 		}
 	},
+
+	delete: async (id: string): Promise<void> => {
+		try {
+			await api.delete<v1.DeleteUserResponse>(`/user/${id}`);
+		} catch (error) {
+			// If user doesn't exist on server, that's fine - we still want to delete locally
+			if (axios.isAxiosError(error) && error.response?.status === 404) {
+				return;
+			}
+			throw error;
+		}
+	},
 };
 
 export const gameApi = {

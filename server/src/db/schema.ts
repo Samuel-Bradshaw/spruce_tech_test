@@ -12,9 +12,9 @@ CREATE TABLE IF NOT EXISTS game (
     first_player TEXT NOT NULL CHECK (first_player IN ('X', 'O')),
     winner TEXT CHECK (winner IN ('X', 'O') OR winner IS NULL),
     is_draw INTEGER DEFAULT NULL,
-    user_x_id TEXT NOT NULL,
-    user_o_id TEXT NOT NULL,
-    FOREIGN KEY (user_x_id) REFERENCES user(id),
-    FOREIGN KEY (user_o_id) REFERENCES user(id)
+    user_x_id TEXT,
+    user_o_id TEXT,
+    FOREIGN KEY (user_x_id) REFERENCES user(id) ON DELETE SET NULL,
+    FOREIGN KEY (user_o_id) REFERENCES user(id) ON DELETE SET NULL
 );
 `;

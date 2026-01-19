@@ -22,6 +22,7 @@ const DRAW_SEQUENCE = [0, 1, 2, 5, 3, 6, 4, 8, 7]; // XOX/XXO/OXO
 const testPlayerX = { id: "test-x", name: "Player X" };
 const testPlayerO = { id: "test-o", name: "Player O" };
 const defaultSettings: GameSettings = {
+	id: "test-game-id",
 	boardSize: 3,
 	firstPlayer: "X",
 	xPlayer: testPlayerX,

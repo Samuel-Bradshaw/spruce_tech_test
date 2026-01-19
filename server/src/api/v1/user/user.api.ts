@@ -42,3 +42,8 @@ export type GetUserStatsResponse = {
 	losses: number;
 	draws: number;
 };
+
+// DELETE /api/v1/user/:id
+export type DeleteUserResponse = {
+	success: boolean;
+};

@@ -7,8 +7,8 @@ export type GameRow = {
 	first_player: string;
 	winner: string | null;
 	is_draw: number | null;
-	user_x_id: string;
-	user_o_id: string;
+	user_x_id: string | null;
+	user_o_id: string | null;
 };
 
 export const toGameData = (row: GameRow): GameData => ({

@@ -1,5 +1,6 @@
 import { type FC, useCallback, useState } from "react";
 import { v4 as uuid } from "uuid";
+import { useDeleteUser } from "./api/useDeleteUser";
 import { useSaveGameResult } from "./api/useSaveGameResult";
 import { Game } from "./components/game/Game";
 import { NewGameButton } from "./components/game/new-game/NewGameButton";
@@ -15,10 +16,17 @@ export const Main: FC = () => {
 	const { players, addPlayer, removePlayer } = usePlayerStorage();
 	const {
 		mutate: saveGameResult,
-		isPending,
-		error,
+		isPending: isSaving,
+		error: saveError,
 		reset: resetSaveError,
 	} = useSaveGameResult();
+
+	const {
+		mutate: deleteUserOnServer,
+		isPending: isDeleting,
+		error: deleteError,
+		reset: resetDeleteError,
+	} = useDeleteUser();
 
 	const getDefaultPlayers = useCallback(() => {
 		const anonymousPlayer = players.find((p) => p.name === ANONYMOUS_NAME);
@@ -52,24 +60,28 @@ export const Main: FC = () => {
 	const activePlayerIds = [gameSettings.xPlayer.id, gameSettings.oPlayer.id];
 
 	const handleRemovePlayer = (id: string) => {
-		removePlayer(id);
-		if (activePlayerIds.includes(id)) {
-			const remainingPlayers = players.filter((p) => p.id !== id);
-			const anonymousPlayer = remainingPlayers.find(
-				(p) => p.name === ANONYMOUS_NAME,
-			);
-			const otherPlayers = remainingPlayers.filter(
-				(p) => p.name !== ANONYMOUS_NAME,
-			);
-			const fallback = anonymousPlayer ?? remainingPlayers[0];
-			setGameSettings({
-				id: uuid(),
-				boardSize: gameSettings.boardSize,
-				firstPlayer: "X",
-				xPlayer: otherPlayers[0] ?? fallback,
-				oPlayer: otherPlayers[1] ?? fallback,
-			});
-		}
+		deleteUserOnServer(id, {
+			onSuccess: () => {
+				removePlayer(id);
+				if (activePlayerIds.includes(id)) {
+					const remainingPlayers = players.filter((p) => p.id !== id);
+					const anonymousPlayer = remainingPlayers.find(
+						(p) => p.name === ANONYMOUS_NAME,
+					);
+					const otherPlayers = remainingPlayers.filter(
+						(p) => p.name !== ANONYMOUS_NAME,
+					);
+					const fallback = anonymousPlayer ?? remainingPlayers[0];
+					setGameSettings({
+						id: uuid(),
+						boardSize: gameSettings.boardSize,
+						firstPlayer: "X",
+						xPlayer: otherPlayers[0] ?? fallback,
+						oPlayer: otherPlayers[1] ?? fallback,
+					});
+				}
+			},
+		});
 	};
 
 	const onGameover = useCallback(
@@ -86,9 +98,9 @@ export const Main: FC = () => {
 		<div className="min-h-screen bg-gray-50 flex flex-col items-center pt-16">
 			<h1 className="text-3xl font-bold text-gray-800 mb-8">Tic Tac Toe</h1>
 			<PendingOverlay
-				isPending={isPending}
-				error={error}
-				onDismissError={resetSaveError}
+				isPending={isSaving || isDeleting}
+				error={saveError ?? deleteError}
+				onDismissError={saveError ? resetSaveError : resetDeleteError}
 			/>
 			<NewGameButton
 				onNewGame={createNewGame}

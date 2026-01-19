@@ -1,13 +1,13 @@
 import { act, renderHook } from "@testing-library/react";
-import { DRAW } from "./types";
 import {
+	board,
 	DRAW_BOARD,
 	EMPTY_BOARD,
+	O_WINS_LEFT_COL,
 	X_WINS_DIAGONAL,
 	X_WINS_TOP_ROW,
-	O_WINS_LEFT_COL,
-	board,
 } from "./testUtils";
+import { DRAW } from "./types";
 import {
 	getNextPlayer,
 	getNumTurns,
@@ -179,6 +179,7 @@ describe("useTicTacToe", () => {
 	const testPlayerX = { id: "test-x", name: "Player X" };
 	const testPlayerO = { id: "test-o", name: "Player O" };
 	const defaultSettings = {
+		id: "test-game-id",
 		boardSize: 3,
 		firstPlayer: "X" as const,
 		xPlayer: testPlayerX,
