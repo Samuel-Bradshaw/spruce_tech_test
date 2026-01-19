@@ -1,6 +1,19 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const tailwindcss = require('tailwindcss')
 const webpack = require('webpack')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+
+module.exports = {
+  // …your existing config…
+  plugins: [
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',      // generate a local HTML file
+      reportFilename: 'report.html',
+      openAnalyzer: true           // automatically launch in browser
+    })
+  ]
+}
+
 
 module.exports = (env) => ({
   mode: 'development',
@@ -10,6 +23,30 @@ module.exports = (env) => ({
     publicPath: '/',
     filename: '[name].[contenthash].js'
   },
+
+  optimization: {
+    runtimeChunk: 'single',
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          name: 'react',
+          chunks: 'all',
+          priority: 20,
+          enforce: true
+        },
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+          priority: 10,
+          enforce: true
+        }
+      }
+    }
+  },
+
   module: {
     rules: [
       {
@@ -45,7 +82,12 @@ module.exports = (env) => ({
     new HtmlWebpackPlugin({
       template: './src/index.html'
     }),
-    new webpack.DefinePlugin({ 'process.env': JSON.stringify(process.env) })
+    new webpack.DefinePlugin({ 'process.env': JSON.stringify(process.env) }),
+	new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      reportFilename: 'report.html',
+      openAnalyzer: true
+    }),
   ],
   devServer: {
     historyApiFallback: true,
