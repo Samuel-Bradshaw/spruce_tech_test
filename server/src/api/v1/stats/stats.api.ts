@@ -1,11 +1,12 @@
 // GET /api/v1/stats
 export type GetStatsResponse = {
-	X: PlayerStats;
-	O: PlayerStats;
+	xWins: number;
+	oWins: number;
 	draws: number;
+	topPlayer: TopPlayer | null;
 };
 
-export type PlayerStats = {
+export type TopPlayer = {
+	name: string;
 	wins: number;
-	losses: number;
 };

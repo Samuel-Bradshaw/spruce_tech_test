@@ -7,6 +7,7 @@ import { NewGameButton } from "./components/game/new-game/NewGameButton";
 import type { GameResult, GameSettings } from "./components/game/types";
 import { PendingOverlay } from "./components/PendingOverlay";
 import { PlayerManager } from "./components/players/PlayerManager";
+import { Stats } from "./components/stats/Stats";
 import {
 	ANONYMOUS_NAME,
 	usePlayerStorage,
@@ -128,6 +129,9 @@ export const Main: FC = () => {
 						onAddPlayer={addPlayer}
 						onRemovePlayer={handleRemovePlayer}
 					/>
+				</div>
+				<div className="absolute right-4 top-0">
+					<Stats />
 				</div>
 			</div>
 		</div>

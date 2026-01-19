@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
 	DRAW,
 	type GameResult,
@@ -38,7 +38,12 @@ const saveGameResult = async (
 };
 
 export const useSaveGameResult = () => {
+	const queryClient = useQueryClient();
+
 	return useMutation({
 		mutationFn: saveGameResult,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["stats"] });
+		},
 	});
 };

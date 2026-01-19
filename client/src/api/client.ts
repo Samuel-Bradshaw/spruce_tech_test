@@ -48,3 +48,10 @@ export const gameApi = {
 		return response.data;
 	},
 };
+
+export const statsApi = {
+	get: async (): Promise<v1.GetStatsResponse> => {
+		const response = await api.get<v1.GetStatsResponse>("/stats");
+		return response.data;
+	},
+};
