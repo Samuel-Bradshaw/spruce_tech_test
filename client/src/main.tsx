@@ -96,7 +96,7 @@ export const Main: FC = () => {
 	);
 
 	return (
-		<div className="min-h-screen bg-gray-50 flex flex-col items-center pt-16">
+		<div className="min-h-screen bg-gray-50 flex flex-col items-center pt-8 lg:pt-16 px-4">
 			<h1 className="text-3xl font-bold text-gray-800 mb-8">Tic Tac Toe</h1>
 			<PendingOverlay
 				isPending={isSaving || isDeleting}
@@ -108,20 +108,30 @@ export const Main: FC = () => {
 				prevSettings={gameSettings}
 				players={players}
 			/>
-			<div className="relative w-full flex justify-center">
+			{/* Stacked layout for narrow screens */}
+			<div className="flex flex-col items-center gap-6 lg:hidden w-full max-w-md">
 				<Game
-					/**
-					 * Changing the key will render an entirely fresh instance of Board.
-					 *
-					 * The alternative would be "reset" logic in the useTicTacToe hook
-					 * to reset state, which currently is probably quite simple,
-					 * but if changes start getting made then there's a risk of the
-					 * reset code getting out-of-sync with any new game code.
-					 */
 					key={gameSettings.id}
 					gameSettings={gameSettings}
 					onGameOver={onGameover}
 				/>
+				<PlayerManager
+					players={players}
+					activePlayerIds={activePlayerIds}
+					onAddPlayer={addPlayer}
+					onRemovePlayer={handleRemovePlayer}
+				/>
+				<Stats />
+			</div>
+			{/* Side panels layout for wide screens */}
+			<div className="hidden lg:block relative w-full">
+				<div className="flex justify-center">
+					<Game
+						key={gameSettings.id}
+						gameSettings={gameSettings}
+						onGameOver={onGameover}
+					/>
+				</div>
 				<div className="absolute left-4 top-0 w-80">
 					<PlayerManager
 						players={players}
