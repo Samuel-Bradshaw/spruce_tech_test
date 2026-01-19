@@ -13,7 +13,7 @@
 		"build": "concurrently \"npm run build:client\" \"npm run build:server\"",
 		"build:client": "npm run build -w client",
 		"build:server": "npm run build -w server",
-		"test": "npm run test -w client",
+		"test": "npm run test --workspaces",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
 		"format": "biome format --write .",

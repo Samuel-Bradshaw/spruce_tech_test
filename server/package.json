@@ -5,7 +5,8 @@
   "scripts": {
     "start": "tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
-	"build": "tsc"
+	"build": "tsc",
+	"test": "echo \"Server: No tests implemented yet\""
   },
   "types": "src/api.ts",
   "files": [
