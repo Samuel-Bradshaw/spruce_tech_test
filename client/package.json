@@ -38,6 +38,7 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "uuid": "^13.0.0"
   }
 }

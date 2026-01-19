@@ -1,15 +1,18 @@
 import { type FC, useRef } from "react";
+import type { Player } from "../../players/types";
+import type { GameSettings } from "../types";
 import { NewGameDialog } from "./NewGameDialog";
-import type { GameSettings } from "./types";
 
 type NewGameButtonProps = {
 	onNewGame: (gameSettings: GameSettings) => void;
 	prevSettings: GameSettings;
+	players: Player[];
 };
 
 export const NewGameButton: FC<NewGameButtonProps> = ({
 	onNewGame,
 	prevSettings,
+	players,
 }) => {
 	const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -36,6 +39,7 @@ export const NewGameButton: FC<NewGameButtonProps> = ({
 				onConfirm={handleConfirm}
 				onCancel={closeDialog}
 				prevSettings={prevSettings}
+				players={players}
 			/>
 		</>
 	);

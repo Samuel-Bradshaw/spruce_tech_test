@@ -11,6 +11,7 @@ describe("NewGameDialog", () => {
 				onConfirm={handleConfirm}
 				onCancel={jest.fn()}
 				prevSettings={{ boardSize: 3, firstPlayer: "X" }}
+				players={[]}
 			/>,
 		);
 
@@ -22,6 +23,7 @@ describe("NewGameDialog", () => {
 		expect(handleConfirm).toHaveBeenCalledWith({
 			firstPlayer: "O",
 			boardSize: 3,
+			playerAssignments: { playerX: null, playerO: null },
 		});
 	});
 
@@ -33,6 +35,7 @@ describe("NewGameDialog", () => {
 				onConfirm={jest.fn()}
 				onCancel={handleCancel}
 				prevSettings={{ boardSize: 3, firstPlayer: "X" }}
+				players={[]}
 			/>,
 		);
 
@@ -49,6 +52,7 @@ describe("NewGameDialog", () => {
 				onConfirm={jest.fn()}
 				onCancel={jest.fn()}
 				prevSettings={{ boardSize: 5, firstPlayer: "O" }}
+				players={[]}
 			/>,
 		);
 
