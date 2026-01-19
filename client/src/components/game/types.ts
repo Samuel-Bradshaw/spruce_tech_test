@@ -1,3 +1,5 @@
+import type { Player } from "../players/types";
+
 /**
  * Player type.
  */
@@ -33,4 +35,14 @@ export type GameSettings = {
 	 * Player that goes first in the game.
 	 */
 	firstPlayer: XorO;
+
+	/**
+	 * Player assigned to X.
+	 */
+	xPlayer: Player;
+
+	/**
+	 * Player assigned to O.
+	 */
+	oPlayer: Player;
 };

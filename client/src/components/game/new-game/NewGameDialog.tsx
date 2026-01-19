@@ -19,13 +19,19 @@ export const NewGameDialog = forwardRef<HTMLDialogElement, NewGameDialogProps>(
 		const [boardSize, setBoardSize] = useState(() =>
 			Math.min(15, Math.max(0, prevSettings.boardSize)),
 		);
-		const [playerXId, setPlayerXId] = useState<string | null>(null);
-		const [playerOId, setPlayerOId] = useState<string | null>(null);
+		const [playerXId, setPlayerXId] = useState<string>(prevSettings.xPlayer.id);
+		const [playerOId, setPlayerOId] = useState<string>(prevSettings.oPlayer.id);
 
 		const handleConfirm = () => {
+			const xPlayer =
+				players.find((p) => p.id === playerXId) ?? prevSettings.xPlayer;
+			const oPlayer =
+				players.find((p) => p.id === playerOId) ?? prevSettings.oPlayer;
 			onConfirm({
 				firstPlayer,
 				boardSize,
+				xPlayer,
+				oPlayer,
 			});
 		};
 
@@ -48,8 +54,8 @@ export const NewGameDialog = forwardRef<HTMLDialogElement, NewGameDialogProps>(
 				>
 					<h2 className="text-lg font-bold text-gray-800 mb-4">New Game</h2>
 
-					<div className="flex gap-6 mb-4">
-						<div className="flex-1">
+					<div className="flex justify-between gap-6 mb-4">
+						<div className="w-48">
 							<label
 								htmlFor="board-size"
 								className="block text-gray-700 font-medium mb-2"

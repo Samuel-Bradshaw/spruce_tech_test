@@ -1,6 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { GameSettings } from "../types";
 import { NewGameDialog } from "./NewGameDialog";
+
+const testPlayerX = { id: "test-x", name: "Player X" };
+const testPlayerO = { id: "test-o", name: "Player O" };
+const defaultSettings: GameSettings = {
+	boardSize: 3,
+	firstPlayer: "X",
+	xPlayer: testPlayerX,
+	oPlayer: testPlayerO,
+};
+const testPlayers = [testPlayerX, testPlayerO];
 
 describe("NewGameDialog", () => {
 	it("calls onConfirm with selected settings", async () => {
@@ -10,8 +21,8 @@ describe("NewGameDialog", () => {
 			<NewGameDialog
 				onConfirm={handleConfirm}
 				onCancel={jest.fn()}
-				prevSettings={{ boardSize: 3, firstPlayer: "X" }}
-				players={[]}
+				prevSettings={defaultSettings}
+				players={testPlayers}
 			/>,
 		);
 
@@ -23,7 +34,8 @@ describe("NewGameDialog", () => {
 		expect(handleConfirm).toHaveBeenCalledWith({
 			firstPlayer: "O",
 			boardSize: 3,
-			playerAssignments: { playerX: null, playerO: null },
+			xPlayer: testPlayerX,
+			oPlayer: testPlayerO,
 		});
 	});
 
@@ -34,8 +46,8 @@ describe("NewGameDialog", () => {
 			<NewGameDialog
 				onConfirm={jest.fn()}
 				onCancel={handleCancel}
-				prevSettings={{ boardSize: 3, firstPlayer: "X" }}
-				players={[]}
+				prevSettings={defaultSettings}
+				players={testPlayers}
 			/>,
 		);
 
@@ -51,8 +63,8 @@ describe("NewGameDialog", () => {
 			<NewGameDialog
 				onConfirm={jest.fn()}
 				onCancel={jest.fn()}
-				prevSettings={{ boardSize: 5, firstPlayer: "O" }}
-				players={[]}
+				prevSettings={{ ...defaultSettings, boardSize: 5, firstPlayer: "O" }}
+				players={testPlayers}
 			/>,
 		);
 

@@ -1,29 +1,22 @@
 import { type FC, useEffect } from "react";
 import { Board } from "./Board";
-import { DRAW, type GameResult, type GameSettings } from "./types";
+import { DRAW, type GameResult, type GameSettings, type XorO } from "./types";
 import { useTicTacToe } from "./useTicTacToe";
 
 type GameProps = {
 	/**
 	 * Settings for the TicTacToe game.
-	 * @default { boardSize:3, firstPlayer:"X" }
 	 */
-	gameSettings?: GameSettings;
+	gameSettings: GameSettings;
 	/**
 	 * To be called when the game is over.
 	 * The winning player is passed in,
 	 * or `null` in the case of a draw.
 	 */
-	onGameOver?: (winner: GameResult) => void;
+	onGameOver?: (result: GameResult) => void;
 };
 
-export const Game: FC<GameProps> = ({
-	gameSettings = {
-		firstPlayer: "X",
-		boardSize: 3,
-	},
-	onGameOver,
-}) => {
+export const Game: FC<GameProps> = ({ gameSettings, onGameOver }) => {
 	const { board, setCell, nextPlayer, gameResult, winningLine } =
 		useTicTacToe(gameSettings);
 
@@ -32,6 +25,11 @@ export const Game: FC<GameProps> = ({
 			onGameOver?.(gameResult);
 		}
 	}, [gameResult, onGameOver]);
+
+	const getPlayerLabel = (marker: XorO): string => {
+		const player = marker === "X" ? gameSettings.xPlayer : gameSettings.oPlayer;
+		return `${player.name} (${marker})`;
+	};
 
 	return (
 		<div className="flex flex-col items-center gap-6">
@@ -46,7 +44,7 @@ export const Game: FC<GameProps> = ({
 					className="text-lg font-semibold text-gray-600"
 					data-testid="game-status"
 				>
-					Next player: <b>{nextPlayer}</b>
+					Next player: <b>{getPlayerLabel(nextPlayer)}</b>
 				</p>
 			)}
 			{gameResult === DRAW && (
@@ -62,7 +60,7 @@ export const Game: FC<GameProps> = ({
 					className="text-lg font-semibold text-gray-800"
 					data-testid="game-status"
 				>
-					Winner: {gameResult}
+					Winner: {getPlayerLabel(gameResult)}
 				</p>
 			)}
 		</div>

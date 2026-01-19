@@ -176,7 +176,14 @@ describe("isBoardFilled", () => {
 });
 
 describe("useTicTacToe", () => {
-	const defaultSettings = { boardSize: 3, firstPlayer: "X" as const };
+	const testPlayerX = { id: "test-x", name: "Player X" };
+	const testPlayerO = { id: "test-o", name: "Player O" };
+	const defaultSettings = {
+		boardSize: 3,
+		firstPlayer: "X" as const,
+		xPlayer: testPlayerX,
+		oPlayer: testPlayerO,
+	};
 
 	const renderGame = (settings = defaultSettings) =>
 		renderHook(() => useTicTacToe(settings));
@@ -222,12 +229,12 @@ describe("useTicTacToe", () => {
 	});
 
 	it("works with different board sizes", () => {
-		const { result: r4 } = renderGame({ boardSize: 4, firstPlayer: "X" });
+		const { result: r4 } = renderGame({ ...defaultSettings, boardSize: 4 });
 		expect(r4.current.board).toHaveLength(16);
 		playMoves(r4, [0, 4, 1, 5, 2, 6, 3]); // X wins top row
 		expect(r4.current.gameResult).toBe("X");
 
-		const { result: r5 } = renderGame({ boardSize: 5, firstPlayer: "X" });
+		const { result: r5 } = renderGame({ ...defaultSettings, boardSize: 5 });
 		expect(r5.current.board).toHaveLength(25);
 	});
 });

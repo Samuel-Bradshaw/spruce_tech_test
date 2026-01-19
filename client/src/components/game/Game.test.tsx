@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Game } from "./Game";
-import { DRAW } from "./types";
+import { DRAW, type GameSettings } from "./types";
 
 const getCell = (index: number) => screen.getByTestId(`cell-${index}`);
 const getStatus = () => screen.getByTestId("game-status");
@@ -19,25 +19,34 @@ const playMoves = async (
 const WIN_SEQUENCE = [0, 3, 1, 4, 2]; // X wins top row
 const DRAW_SEQUENCE = [0, 1, 2, 5, 3, 6, 4, 8, 7]; // XOX/XXO/OXO
 
+const testPlayerX = { id: "test-x", name: "Player X" };
+const testPlayerO = { id: "test-o", name: "Player O" };
+const defaultSettings: GameSettings = {
+	boardSize: 3,
+	firstPlayer: "X",
+	xPlayer: testPlayerX,
+	oPlayer: testPlayerO,
+};
+
 describe("Game component integration test", () => {
 	it("displays and alternates next player", async () => {
 		const user = userEvent.setup();
-		render(<Game />);
+		render(<Game gameSettings={defaultSettings} />);
 
-		expect(getStatus()).toHaveTextContent("Next player: X");
+		expect(getStatus()).toHaveTextContent("Next player:");
 		await user.click(getCell(0));
-		expect(getStatus()).toHaveTextContent("Next player: O");
+		expect(getStatus()).toHaveTextContent("Next player:");
 	});
 
 	it("uses specified first player", () => {
-		render(<Game gameSettings={{ boardSize: 3, firstPlayer: "O" }} />);
-		expect(getStatus()).toHaveTextContent("Next player: O");
+		render(<Game gameSettings={{ ...defaultSettings, firstPlayer: "O" }} />);
+		expect(getStatus()).toHaveTextContent("Next player:");
 	});
 
 	it("displays winner and disables cells when game is won", async () => {
 		const user = userEvent.setup();
 		const handleGameOver = jest.fn();
-		render(<Game onGameOver={handleGameOver} />);
+		render(<Game gameSettings={defaultSettings} onGameOver={handleGameOver} />);
 
 		await playMoves(user, WIN_SEQUENCE);
 
@@ -51,7 +60,7 @@ describe("Game component integration test", () => {
 	it("displays draw and calls onGameOver with DRAW", async () => {
 		const user = userEvent.setup();
 		const handleGameOver = jest.fn();
-		render(<Game onGameOver={handleGameOver} />);
+		render(<Game gameSettings={defaultSettings} onGameOver={handleGameOver} />);
 
 		await playMoves(user, DRAW_SEQUENCE);
 
@@ -61,12 +70,12 @@ describe("Game component integration test", () => {
 
 	it("renders correct board size", () => {
 		const { unmount } = render(
-			<Game gameSettings={{ boardSize: 4, firstPlayer: "X" }} />,
+			<Game gameSettings={{ ...defaultSettings, boardSize: 4 }} />,
 		);
 		expect(screen.getAllByRole("button")).toHaveLength(16);
 		unmount();
 
-		render(<Game gameSettings={{ boardSize: 5, firstPlayer: "X" }} />);
+		render(<Game gameSettings={{ ...defaultSettings, boardSize: 5 }} />);
 		expect(screen.getAllByRole("button")).toHaveLength(25);
 	});
 
@@ -75,7 +84,7 @@ describe("Game component integration test", () => {
 		const handleGameOver = jest.fn();
 		render(
 			<Game
-				gameSettings={{ boardSize: 4, firstPlayer: "X" }}
+				gameSettings={{ ...defaultSettings, boardSize: 4 }}
 				onGameOver={handleGameOver}
 			/>,
 		);
