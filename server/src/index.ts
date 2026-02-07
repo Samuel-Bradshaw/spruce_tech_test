@@ -11,6 +11,7 @@ app.use('/api/game', gameRouter)
 app.use('/api/stats', statsRouter)
 
 const start = async () => {
+  // No player creation endpoint has been implemented yet, so seed the default players on startup
   await Promise.all(
     ['X', 'O'].map(name =>
       prisma.player.upsert({ where: { name }, update: {}, create: { name } })

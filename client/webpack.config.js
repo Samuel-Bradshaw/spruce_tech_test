@@ -1,6 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const tailwindcss = require('tailwindcss')
-const webpack = require('webpack')
 
 module.exports = (env) => ({
   mode: 'development',
@@ -15,10 +14,6 @@ module.exports = (env) => ({
       {
         test: /\.tsx?$/,
         loader: 'ts-loader'
-      },
-      {
-        test: /\.(webp|jpe?g|svg|png)$/i,
-        loader: 'file-loader'
       },
       {
         test: /\.(css|scss)$/i,
@@ -44,8 +39,7 @@ module.exports = (env) => ({
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html'
-    }),
-    new webpack.DefinePlugin({ 'process.env': JSON.stringify(process.env) })
+    })
   ],
   devServer: {
     historyApiFallback: true,
@@ -56,7 +50,7 @@ module.exports = (env) => ({
     proxy: [
       {
         context: ['/api'],
-        target: 'http://server:3000'
+        target: process.env.API_URL
       }
     ]
   }

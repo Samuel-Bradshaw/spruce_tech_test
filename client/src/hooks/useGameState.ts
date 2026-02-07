@@ -1,8 +1,13 @@
 import { useState } from 'react'
-import { Board } from '../types'
+import { Board, Player } from '../types'
 import { createBoard, checkWinner, isBoardFull, getCurrentPlayer, DEFAULT_BOARD_SIZE } from '../utils/game'
 
-export const useGameState = () => {
+interface GameOverResult {
+  boardSize: number
+  winner?: Player
+}
+
+export const useGameState = (onGameOver?: (result: GameOverResult) => void) => {
   const [boardSize, setBoardSize] = useState(DEFAULT_BOARD_SIZE)
   const [board, setBoard] = useState<Board>(() => createBoard(boardSize))
 
@@ -18,6 +23,12 @@ export const useGameState = () => {
     const newBoard = board.map(r => [...r])
     newBoard[row][col] = currentPlayer
     setBoard(newBoard)
+
+    const moveWinner = checkWinner(newBoard)
+    const moveDraw = !moveWinner && isBoardFull(newBoard)
+    if (moveWinner || moveDraw) {
+      onGameOver?.({ boardSize, winner: moveWinner ?? undefined })
+    }
   }
 
   const resetGame = () => setBoard(createBoard(boardSize))

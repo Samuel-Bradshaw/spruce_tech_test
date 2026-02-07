@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Player } from '../types'
 import { saveGame } from '../api'
 import { useGameState } from '../hooks/useGameState'
@@ -9,6 +9,17 @@ import { GameStatus } from './GameStatus'
 import { Stats } from './Stats'
 
 export const Game: React.FC = () => {
+  const { stats, refreshStats } = useStats()
+
+  const handleGameOver = async ({ boardSize, winner }: { boardSize: number; winner?: Player }) => {
+    try {
+      await saveGame(boardSize, Player.X, Player.O, winner)
+      await refreshStats()
+    } catch (err) {
+      console.warn('Failed to save game:', err)
+    }
+  }
+
   const {
     board,
     boardSize,
@@ -20,22 +31,7 @@ export const Game: React.FC = () => {
     playMove,
     resetGame,
     changeBoardSize
-  } = useGameState()
-
-  const { stats, refreshStats } = useStats()
-
-  useEffect(() => {
-    const onGameOver = async () => {
-      try {
-        await saveGame(boardSize, Player.X, Player.O, winner ?? undefined)
-        await refreshStats()
-      } catch {
-        // Save failed
-      }
-    }
-
-    if (gameOver) onGameOver()
-  }, [gameOver])
+  } = useGameState(handleGameOver)
 
   return (
     <div className='flex flex-col mt-10 items-center gap-6'>
