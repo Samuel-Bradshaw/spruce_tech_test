@@ -1,1 +1,4 @@
-export type XorO = 'X' | 'O'
+export enum Player {
+  X = 'X',
+  O = 'O',
+}
