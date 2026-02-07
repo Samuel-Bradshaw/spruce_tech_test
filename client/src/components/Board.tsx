@@ -16,6 +16,7 @@ export const Board: React.FC<BoardProps> = ({ board, disabled, onCellClick }) =>
           <Cell
             key={colIdx}
             value={cell}
+            size={board.length}
             disabled={disabled}
             onClick={() => onCellClick(rowIdx, colIdx)}
           />

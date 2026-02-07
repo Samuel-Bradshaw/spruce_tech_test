@@ -1,25 +1,43 @@
 import React from 'react'
 import { useGameState } from '../hooks/useGameState'
 import { Board } from './Board'
+import { BoardSizeInput } from './BoardSizeInput'
 import { GameStatus } from './GameStatus'
 
 export const Game: React.FC = () => {
-  const { board, currentPlayer, winner, isDraw, gameOver, playMove, resetGame } = useGameState()
+  const {
+    board,
+    boardSize,
+    currentPlayer,
+    winner,
+    isDraw,
+    gameOver,
+    hasStarted,
+    playMove,
+    resetGame,
+    changeBoardSize
+  } = useGameState()
 
   return (
-    <div className='flex flex-col mt-10 items-center gap-10'>
+    <div className='flex flex-col mt-10 items-center gap-6'>
       <div className='font-bold text-2xl'>Tic Tac Toe</div>
 
-      <GameStatus 
-        winner={winner} 
-        isDraw={isDraw}
-        currentPlayer={currentPlayer} 
+      <BoardSizeInput
+        value={boardSize}
+        disabled={hasStarted}
+        onChange={changeBoardSize}
       />
 
-      <Board 
-        board={board} 
-        disabled={gameOver} 
-        onCellClick={playMove} 
+      <GameStatus
+        winner={winner}
+        isDraw={isDraw}
+        currentPlayer={currentPlayer}
+      />
+
+      <Board
+        board={board}
+        disabled={gameOver}
+        onCellClick={playMove}
       />
 
       {gameOver && (

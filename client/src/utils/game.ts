@@ -1,8 +1,10 @@
 import { Board, Player } from '../types'
 
-export const BOARD_SIZE = 3
+export const DEFAULT_BOARD_SIZE = 3
+export const MIN_BOARD_SIZE = 3
+export const MAX_BOARD_SIZE = 15
 
-export const createBoard = (size = BOARD_SIZE): Board =>
+export const createBoard = (size = DEFAULT_BOARD_SIZE): Board =>
   Array.from({ length: size }, () => Array(size).fill(undefined))
 
 export const checkWinner = (board: Board): Player | undefined => {
