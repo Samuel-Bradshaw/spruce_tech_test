@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    volumes:
+      # Mount source code for hot reloading
+      - ./client/src:/app/src
+      - ./client/public:/app/public
+      - ./client/webpack.config.js:/app/webpack.config.js
+      - ./client/tsconfig.json:/app/tsconfig.json
+      - ./client/tailwind.config.js:/app/tailwind.config.js
+      # Exclude node_modules to use container's version
+      - /app/node_modules
+
