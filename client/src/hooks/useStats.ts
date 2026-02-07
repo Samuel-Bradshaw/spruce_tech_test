@@ -1,21 +1,13 @@
 import { useState, useEffect } from 'react'
 import { PlayerStats } from '../types'
 
-const parseStats = (data: Record<string, string>[]): PlayerStats[] =>
-  data.map(row => ({
-    symbol: row.symbol,
-    wins: Number(row.wins),
-    losses: Number(row.losses),
-    draws: Number(row.draws),
-  }))
-
 export const useStats = () => {
   const [stats, setStats] = useState<PlayerStats[]>([])
 
   const refreshStats = async () => {
     try {
       const res = await fetch('/api/stats?players=X,O')
-      setStats(parseStats(await res.json()))
+      setStats(await res.json() as PlayerStats[])
     } catch {
       // Stats unavailable
     }
