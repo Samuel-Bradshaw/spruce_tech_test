@@ -53,10 +53,11 @@ module.exports = (env) => ({
     host: '0.0.0.0',
     hot: true,
     watchFiles: ['src/**/*'],
-    proxy: {
-      '/api': {
+    proxy: [
+      {
+        context: ['/api'],
         target: 'http://server:3000'
       }
-    }
+    ]
   }
 })
