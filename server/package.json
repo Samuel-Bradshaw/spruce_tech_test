@@ -1,0 +1,23 @@
+{
+  "name": "tic_tac_toe_server",
+  "version": "1.0.0",
+  "scripts": {
+    "postinstall": "prisma generate",
+    "start": "prisma db push && tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.8.0",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.0",
+    "prisma": "^5.8.0",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0"
+  },
+  "engines": {
+    "node": ">=18.19.1"
+  }
+}

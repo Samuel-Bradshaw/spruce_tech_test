@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { Player } from '../types'
 import { useGameState } from '../hooks/useGameState'
+import { useStats } from '../hooks/useStats'
 import { Board } from './Board'
 import { BoardSizeInput } from './BoardSizeInput'
 import { GameStatus } from './GameStatus'
+import { Stats } from './Stats'
 
 export const Game: React.FC = () => {
   const {
@@ -17,6 +20,12 @@ export const Game: React.FC = () => {
     resetGame,
     changeBoardSize
   } = useGameState()
+
+  const { stats, saveGame } = useStats()
+
+  useEffect(() => {
+    if (gameOver) saveGame(boardSize, Player.X, Player.O, winner ?? undefined)
+  }, [gameOver])
 
   return (
     <div className='flex flex-col mt-10 items-center gap-6'>
@@ -48,6 +57,8 @@ export const Game: React.FC = () => {
           New Game
         </button>
       )}
+
+      <Stats stats={stats} />
     </div>
   )
 }

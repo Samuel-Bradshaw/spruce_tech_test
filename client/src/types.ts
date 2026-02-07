@@ -6,3 +6,10 @@ export enum Player {
 export type CellValue = Player | undefined
 
 export type Board = CellValue[][]
+
+export interface PlayerStats {
+  symbol: string
+  wins: number
+  losses: number
+  draws: number
+}

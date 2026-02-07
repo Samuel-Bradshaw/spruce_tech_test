@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+
+  gamesAsX Game[] @relation("PlayerX")
+  gamesAsO Game[] @relation("PlayerO")
+  gamesWon Game[] @relation("Winner")
+
+  @@map("players")
+}
+
+model Game {
+  id          Int      @id @default(autoincrement())
+  boardSize   Int      @default(3) @map("board_size")
+  playerX     Player   @relation("PlayerX", fields: [playerXId], references: [id])
+  playerXId   Int      @map("player_x_id")
+  playerO     Player   @relation("PlayerO", fields: [playerOId], references: [id])
+  playerOId   Int      @map("player_o_id")
+  winner      Player?  @relation("Winner", fields: [winnerId], references: [id])
+  winnerId    Int?     @map("winner_id")
+  completedAt DateTime @default(now()) @map("completed_at")
+
+  @@index([playerXId])
+  @@index([playerOId])
+  @@index([winnerId])
+  @@index([completedAt])
+  @@map("games")
+}
