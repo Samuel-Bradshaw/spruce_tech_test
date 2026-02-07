@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react'
+import React from 'react'
 import { Player } from '../types'
 import { saveGame } from '../api'
 import { useGameState } from '../hooks/useGameState'
@@ -9,6 +9,17 @@ import { GameStatus } from './GameStatus'
 import { Stats } from './Stats'
 
 export const Game: React.FC = () => {
+  const { stats, refreshStats } = useStats()
+
+  const handleGameOver = async ({ boardSize, winner }: { boardSize: number; winner?: Player }) => {
+    try {
+      await saveGame(boardSize, Player.X, Player.O, winner)
+      await refreshStats()
+    } catch (err) {
+      console.warn('Failed to save game:', err)
+    }
+  }
+
   const {
     board,
     boardSize,
@@ -20,34 +31,7 @@ export const Game: React.FC = () => {
     playMove,
     resetGame,
     changeBoardSize
-  } = useGameState()
-
-  const { stats, refreshStats } = useStats()
-  
-  // Guard against duplicate saves — the effect can re-fire if deps change while the async save is in-flight
-  const savingRef = useRef(false)
-
-  const handleGameOver = useCallback(async () => {
-    if (savingRef.current) {
-      return
-    }
-    savingRef.current = true
-
-    try {
-      await saveGame(boardSize, Player.X, Player.O, winner ?? undefined)
-      await refreshStats()
-    } catch (err) {
-      console.warn('Failed to save game:', err)
-    }
-  }, [boardSize, winner, refreshStats])
-
-  useEffect(() => {
-    if (gameOver) {
-      handleGameOver()
-    } else {
-      savingRef.current = false
-    }
-  }, [gameOver, handleGameOver])
+  } = useGameState(handleGameOver)
 
   return (
     <div className='flex flex-col mt-10 items-center gap-6'>
