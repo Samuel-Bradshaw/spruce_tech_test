@@ -31,7 +31,7 @@ router.get(
     query('players').isString().trim().notEmpty().withMessage('comma-separated player names required'),
   ]),
   async (req: Request<object, object, object, StatsQuery>, res: Response<PlayerStats[]>) => {
-    const names = req.query.players.split(',').map(n => n.trim()).filter(Boolean)
+    const names = req.query.players!.split(',').map(n => n.trim()).filter(Boolean)
 
     const players = await prisma.player.findMany({
       where: { name: { in: names } },

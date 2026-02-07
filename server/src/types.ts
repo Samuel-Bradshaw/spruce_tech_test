@@ -13,6 +13,6 @@ export interface PlayerStats {
 }
 
 export interface StatsQuery {
-  players: string
+  players?: string
 }
 
