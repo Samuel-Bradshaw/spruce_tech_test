@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { Player } from '../types'
+import { saveGame } from '../api'
 import { useGameState } from '../hooks/useGameState'
 import { useStats } from '../hooks/useStats'
 import { Board } from './Board'
@@ -21,10 +22,19 @@ export const Game: React.FC = () => {
     changeBoardSize
   } = useGameState()
 
-  const { stats, saveGame } = useStats()
+  const { stats, refreshStats } = useStats()
 
   useEffect(() => {
-    if (gameOver) saveGame(boardSize, Player.X, Player.O, winner ?? undefined)
+    const onGameOver = async () => {
+      try {
+        await saveGame(boardSize, Player.X, Player.O, winner ?? undefined)
+        await refreshStats()
+      } catch {
+        // Save failed
+      }
+    }
+
+    if (gameOver) onGameOver()
   }, [gameOver])
 
   return (

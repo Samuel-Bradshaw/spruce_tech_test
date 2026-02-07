@@ -1,28 +1,15 @@
 import { useState, useEffect } from 'react'
 import { PlayerStats } from '../types'
+import { fetchStats } from '../api'
 
 export const useStats = () => {
   const [stats, setStats] = useState<PlayerStats[]>([])
 
   const refreshStats = async () => {
     try {
-      const res = await fetch('/api/stats?players=X,O')
-      setStats(await res.json() as PlayerStats[])
+      setStats(await fetchStats(['X', 'O']))
     } catch {
       // Stats unavailable
-    }
-  }
-
-  const saveGame = async (boardSize: number, playerX: string, playerO: string, winner?: string) => {
-    try {
-      await fetch('/api/game', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ boardSize, playerX, playerO, winner: winner ?? null }),
-      })
-      await refreshStats()
-    } catch {
-      // Save failed
     }
   }
 
@@ -30,5 +17,5 @@ export const useStats = () => {
     refreshStats()
   }, [])
 
-  return { stats, saveGame }
+  return { stats, refreshStats }
 }

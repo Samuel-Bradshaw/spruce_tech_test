@@ -11,13 +11,11 @@ app.use('/api/game', gameRouter)
 app.use('/api/stats', statsRouter)
 
 const start = async () => {
-  for (const name of ['O', 'X']) {
-    await prisma.player.upsert({
-      where: { name },
-      update: {},
-      create: { name },
-    })
-  }
+  await Promise.all(
+    ['X', 'O'].map(name =>
+      prisma.player.upsert({ where: { name }, update: {}, create: { name } })
+    )
+  )
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
