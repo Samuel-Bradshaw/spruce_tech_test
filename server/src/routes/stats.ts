@@ -5,7 +5,7 @@ import { validate } from '../middleware/validate'
 import { prisma } from '../db'
 import { PlayerStats, StatsQuery } from '../types'
 
-type PlayerWithGames = Player & {
+export type PlayerWithGames = Player & {
   gamesAsX: Game[]
   gamesAsO: Game[]
   gamesWon: Game[]
@@ -13,7 +13,7 @@ type PlayerWithGames = Player & {
 
 const router = Router()
 
-const toStats = (player: PlayerWithGames): PlayerStats => {
+export const toStats = (player: PlayerWithGames): PlayerStats => {
   const allGames = [...player.gamesAsX, ...player.gamesAsO]
   const draws = allGames.filter(g => g.winnerId === null).length
 

@@ -1,14 +1,12 @@
-FROM node:18.19.1
+FROM node:20.20.0
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
-
 COPY prisma ./prisma
 
-RUN npx prisma generate
+RUN npm ci
 
 EXPOSE 3000
 
