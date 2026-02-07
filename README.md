@@ -1,31 +1,46 @@
-
 # Tic-Tac-Toe
-The below problems are to allow us a glimpse into your problem solving ability, style and current skill set. Vibe coding is allowed but we are looking for good taste, brevity and clarity in your code. 
 
-## Problems
-### Problem 1
-We have started a basic game of Tic-Tac-Toe as outlined [here](https://en.wikipedia.org/wiki/Tic-tac-toe) but we don't have anyone good enough to code to finish it! 
-- Please implement a complete basic game of Tic-Tac-Toe
-- Please use React and TypeScript throughout, if you know TailwindCSS please expand on what is already provided, otherwise it is fine to use raw styling 
-- Both players will play out of the same application, it is sufficient to just switch the current player each time a move is played
-- Once a game is completed, I should be able to start another game 
+A two-player Tic-Tac-Toe game with a scalable board (3×3 to 15×15) and persistent game statistics.
 
-### Problem 2
-We are bored with the basic game now, can you make it so the board can be scaled to any size? 
-- Add some kind of input which allows me to change the board size
-- The board size should be a number between 3 and 15 
+## Tech Stack
 
-### Problem 3
-We want to store game results in a database.
-- Create a simple backend server
-- Use any SQL database to store the results, please structure it in a relational manner and in a way for it to be expanded for future use cases 
-- Display simple stats back to the user including number of win and losses for each player
+- **Client** — React, TypeScript, TailwindCSS, Webpack
+- **Server** — Node.js, Express, Prisma ORM
+- **Database** — PostgreSQL
+- **Infrastructure** — Docker Compose
 
 ## Quickstart
-- Make sure you have **node** installed
-- `cd client`
-- `npm i`
-- `npm start`
 
-## Submission
-Once you are done please submit the public repo to your recruiter or invite nick@spruce.eco to your private repo and let your recruiter know. 
+Requires **Docker** and **Docker Compose**.
+
+```bash
+docker-compose up --build
+```
+
+- Client: http://localhost:3001
+- Server: http://localhost:3000
+
+## Running Tests
+
+```bash
+cd client && npm test
+cd server && npm install && npm test
+```
+
+## Project Structure
+
+```
+client/          React frontend
+  src/
+    components/  UI components (Game, Board, Cell, GameStatus, Stats, BoardSizeInput)
+    hooks/       Custom hooks (useGameState, useStats)
+    utils/       Game logic (win detection, board creation)
+  test/          Unit tests
+
+server/          Express backend
+  src/
+    routes/      API endpoints (POST /api/game, GET /api/stats)
+    middleware/  Request validation
+  prisma/        Database schema
+  test/          Unit tests
+```

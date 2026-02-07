@@ -19,7 +19,7 @@ export const GameStatus: React.FC<GameStatusProps> = ({ winner, isDraw, currentP
     )}
     {!winner && !isDraw && (
       <span>
-        <span className='text-blue-600'>{currentPlayer}</span>&apos;s turn
+        <span className={currentPlayer === Player.X ? 'text-blue-600' : 'text-red-500'}>{currentPlayer}</span>&apos;s turn
       </span>
     )}
   </div>
