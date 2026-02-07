@@ -6,7 +6,6 @@ interface StatsProps {
 }
 
 export const Stats: React.FC<StatsProps> = ({ stats }) => {
-  if (stats.length === 0) return null
 
   return (
     <div className='flex flex-col items-center gap-2'>
