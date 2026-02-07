@@ -3,6 +3,6 @@ export enum Player {
   O = 'O',
 }
 
-export type Cell = Player | undefined
+export type CellValue = Player | undefined
 
-export type Board = Cell[][]
+export type Board = CellValue[][]
