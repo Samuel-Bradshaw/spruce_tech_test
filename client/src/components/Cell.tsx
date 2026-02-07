@@ -1,5 +1,5 @@
 import React from 'react'
-import { Cell as CellValue, Player } from '../types'
+import { CellValue, Player } from '../types'
 
 interface CellProps {
   value: CellValue
