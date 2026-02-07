@@ -49,6 +49,9 @@ module.exports = (env) => ({
   ],
   devServer: {
     historyApiFallback: true,
-    port: 3001
+    port: 3001,
+    host: '0.0.0.0',
+    hot: true,
+    watchFiles: ['src/**/*']
   }
 })
